@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề kiểm tra - Luyện tập</title>
+    <style>
+        * { box-sizing: border-box; }
+        [hidden] { display: none !important; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f7fbff; color: #1c2b3a; line-height: 1.6; }
+ 
+        .topbar { position: sticky; top: 0; z-index: 50; background: #1e88e5; color: #fff; padding: 8px 14px 6px; box-shadow: 0 2px 6px rgba(30,136,229,.25); }
+        .topbar .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; max-width: 820px; margin: auto; }
+        .topbar h1 { margin: 0; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+        .stats { font-size: 13px; opacity: .95; }
+        .bar { max-width: 820px; margin: 6px auto 0; height: 6px; background: rgba(255,255,255,.35); border-radius: 3px; overflow: hidden; }
+        .bar > i { display: block; height: 100%; width: 0; background: #fff; transition: width .3s; }
+        .tbtn { background: #fff; color: #1565c0; border: none; border-radius: 4px; padding: 5px 12px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .tbtn:hover { background: #e3f0fb; }
+ 
+        main { max-width: 820px; margin: auto; padding: 14px; }
+        details.settings { background: #fff; border: 1px solid #b3d4fc; border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; }
+        details.settings summary { cursor: pointer; font-weight: bold; color: #1565c0; }
+        .setrow { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 10px 0 6px; font-size: 14px; }
+        .setrow label { cursor: pointer; }
+        .setbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .sbtn { background: #1e88e5; color: #fff; border: none; border-radius: 4px; padding: 7px 14px; cursor: pointer; font-weight: bold; }
+        .sbtn:hover { background: #1565c0; }
+        .sbtn.warn { background: #ef6c00; }
+        .sbtn.warn:hover { background: #e65100; }
+        #note { font-size: 12px; color: #8a5a00; margin-top: 6px; min-height: 1em; }
+ 
+        h3.parttitle { color: #1565c0; border-bottom: 2px solid #b3d4fc; padding-bottom: 5px; margin: 26px 0 12px; text-transform: uppercase; font-size: 17px; }
+ 
+        .question { background: #eef6fc; border: 2px solid #b3d4fc; border-radius: 6px; padding: 14px; margin-bottom: 16px; overflow-x: auto; }
+        .question:not(.shown) { display: none; }
+        .question.s-correct { border-color: #28a745; }
+        .question.s-wrong { border-color: #dc3545; }
+        .question.s-partial { border-color: #ff9800; }
+        .hide-done .question.done-hide { display: none; }
+        .qtext { margin-bottom: 12px; word-wrap: break-word; }
+        mjx-container { max-width: 100%; overflow-x: auto; overflow-y: hidden; }
+ 
+        #moreWrap { text-align: center; margin: 6px 0 26px; }
+        #moreBtn { background: #fff; color: #1565c0; border: 2px dashed #1e88e5; border-radius: 6px; padding: 10px 22px; font-weight: bold; cursor: pointer; }
+        #moreBtn:hover { background: #e3f0fb; }
+ 
+        .opt { display: flex; gap: 8px; align-items: flex-start; background: #fff; border: 1px solid #b3d4fc; border-radius: 4px; padding: 9px 11px; margin: 7px 0; cursor: pointer; transition: .2s; }
+        .opt:hover:not(.locked) { background: #e3f0fb; border-color: #1e88e5; }
+        .opt:focus-visible, .tfb button:focus-visible { outline: 3px solid #ff9800; outline-offset: 1px; }
+        .opt.locked { cursor: default; }
+        .opt.locked:not(.correct):not(.wrong) { opacity: .55; }
+        .opt.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .opt.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .lab { font-weight: bold; min-width: 1.7em; }
+        .ob { flex: 1; min-width: 0; overflow-x: auto; }
+ 
+        .tfrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; background: #fff; border: 1px solid #b3d4fc; border-radius: 4px; padding: 8px 10px; margin: 7px 0; }
+        .tfrow.r-ok { border-color: #28a745; }
+        .tfrow.r-bad { border-color: #dc3545; }
+        .tfc { flex: 1 1 60%; min-width: 0; overflow-x: auto; }
+        .tfb { display: flex; gap: 8px; }
+        .tfb button { padding: 6px 16px; font-weight: bold; border: 2px solid #b3d4fc; background: #fff; border-radius: 5px; cursor: pointer; }
+        .tfb button:hover:not(:disabled) { background: #e3f0fb; }
+        .tfb button:disabled { cursor: default; }
+        .tfb button.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .tfb button.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+ 
+        .shortrow { display: flex; gap: 8px; flex-wrap: wrap; }
+        .sans { width: 190px; max-width: 100%; padding: 9px 12px; font-size: 18px; font-weight: bold; border: 2px solid #1e88e5; border-radius: 5px; color: #1565c0; }
+        .sans.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .sans.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .chk { background: #ffc107; border: none; border-radius: 5px; padding: 0 18px; font-weight: bold; cursor: pointer; min-height: 42px; }
+        .chk:disabled { background: #ccc; cursor: default; }
+        .true-ans { margin-top: 10px; color: #28a745; font-weight: bold; }
+ 
+        .fb { margin-top: 8px; font-weight: bold; min-height: 1.2em; }
+        .f-correct { color: #28a745; } .f-wrong { color: #dc3545; } .f-partial { color: #ef6c00; }
+        .qtools { margin-top: 6px; }
+        .sol-btn { background: #17a2b8; color: #fff; border: none; border-radius: 4px; padding: 6px 14px; cursor: pointer; font-weight: bold; }
+        .sol-btn:hover { background: #138496; }
+        .solution-box { display: none; margin-top: 12px; padding: 14px; background: #e8f4fc; border-left: 5px solid #0288d1; border-radius: 4px; overflow-x: auto; }
+ 
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; display: none; align-items: center; justify-content: center; padding: 14px; }
+        .modal.open { display: flex; }
+        .mbox { background: #fff; border-radius: 10px; width: 100%; max-width: 440px; padding: 22px 22px 18px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,.35); max-height: 92vh; overflow-y: auto; }
+        .mbox h2 { margin: 0 0 4px; color: #1565c0; }
+        .bigscore { font-size: 40px; font-weight: bold; color: #e53935; line-height: 1.2; }
+        .pct { font-size: 18px; color: #555; margin-bottom: 6px; }
+        #sumMsg { margin: 4px 0 10px; color: #333; }
+        .plist { list-style: none; padding: 0; margin: 10px 0 14px; text-align: left; }
+        .plist li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dashed #cfe0f1; padding: 6px 0; font-size: 14px; }
+        .mbtns { display: flex; flex-direction: column; gap: 8px; }
+ 
+        /* --- SVG / ẢNH + KHUNG ZOOM DÙNG CHUNG (khung tự co giãn, không đặt chiều cao cố định) --- */
+        :root {
+            --zoom-accent: #1e88e5; --zoom-accent-hover: #1565c0;
+            --zoom-border: #b3d4fc; --zoom-bar-bg: #eef6fc; --zoom-max-h: none;
+        }
+        svg { max-width: 100%; height: auto; display: block; margin: 10px auto; overflow: visible; }
+        svg text { font-family: Arial, sans-serif; }
+        img { max-width: 100%; height: auto; }
+        .zoom-container { display: flex; align-items: flex-start; gap: 10px; margin: 15px 0; }
+        .zoom-viewport {
+            flex: 1 1 auto; min-width: 0;
+            overflow: auto; -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--zoom-border); border-radius: 4px; background: #fff;
+            box-sizing: border-box; padding: 4px;
+        }
+        /* chỉ giới hạn chiều cao và giữ cuộn bên trong khi ảnh đang được phóng to */
+        .zoom-viewport.can-pan { cursor: grab; max-height: var(--zoom-max-h); overscroll-behavior: contain; }
+        .zoom-viewport.dragging { cursor: grabbing; user-select: none; }
+        .zoom-toolbar { display: flex; flex-direction: column; gap: 5px; background: var(--zoom-bar-bg); padding: 5px; border-radius: 4px; border: 1px solid var(--zoom-border); flex-shrink: 0; }
+        .zoom-btn { background: var(--zoom-accent); color: #fff; border: none; padding: 6px 10px; font-size: 14px; border-radius: 4px; cursor: pointer; transition: background .2s, opacity .2s; white-space: nowrap; }
+        .zoom-btn:hover:not(:disabled) { background: var(--zoom-accent-hover); }
+        .zoom-btn:disabled { background: #ccc; cursor: not-allowed; opacity: .6; }
+        .zoom-media { display: block; margin: 0 auto; max-width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+        .zoom-media.zoomed { width: var(--zw) !important; max-width: none !important; height: auto !important; }
+        /* --- BẢNG DÀI: bọc trong khung cuộn ngang, không làm tràn lề --- */
+        .table-scroll { display: block; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; margin: 10px 0; }
+        .table-scroll > table { margin: 0; max-width: 100%; border-collapse: collapse; }
+        .table-scroll th, .table-scroll td { overflow-wrap: break-word; }
+        /* .table-responsive do TeX2HTML tạo ra: trước đây chỉ mẫu làm bài có CSS này nên bảng rộng bị tràn ở trình chiếu / luyện tập */
+        .table-responsive { display: block; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; margin: 15px 0; }
+        /* --- BẢNG RỘNG TRÊN ĐIỆN THOẠI: gợi ý vuốt ngang, cột đầu cố định, xem toàn màn hình --- */
+        .tbl-box { position: relative; margin: 12px 0; max-width: 100%; min-width: 0; }
+        .tbl-box > .tbl-wrap { position: relative; }
+        .tbl-box .table-responsive, .tbl-box .table-scroll { margin: 0; }
+        .tbl-hint { display: none; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 4px; font-size: 12.5px; color: #5f7b94; }
+        .tbl-box.has-scroll > .tbl-hint { display: flex; }
+        .tbl-open { font: inherit; font-size: 12.5px; padding: 4px 10px; border-radius: 14px; border: 1px solid var(--zoom-border); background: var(--zoom-bar-bg); color: var(--zoom-accent-hover); cursor: pointer; white-space: nowrap; }
+        .tbl-fade { display: none; position: absolute; top: 0; right: 0; bottom: 0; width: 30px; pointer-events: none; background: linear-gradient(to right, rgba(255,255,255,0), rgba(120,140,160,.28)); }
+        .tbl-box.has-scroll:not(.at-end) .tbl-fade { display: block; }
+        .tbl-box.has-scroll table.sticky-first tr > :first-child { position: sticky; left: 0; z-index: 2; background: #fff; box-shadow: 2px 0 4px -2px rgba(0,0,0,.35); }
+        @media (max-width: 600px) {
+            .tbl-box td, .tbl-box th { font-size: 14px; padding: 4px 7px !important; }
+        }
+        #tblOverlay { position: fixed; inset: 0; z-index: 99999; background: #fff; display: none; flex-direction: column; }
+        #tblOverlay.open { display: flex; }
+        .tbl-ov-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: var(--zoom-bar-bg); border-bottom: 1px solid var(--zoom-border); }
+        .tbl-ov-bar .ttl { flex: 1; min-width: 0; font-size: 13px; font-weight: bold; color: #333; }
+        .tbl-ov-body { flex: 1; overflow: auto; -webkit-overflow-scrolling: touch; padding: 10px; touch-action: pan-x pan-y; }
+        .tbl-ov-body table { margin: 0; width: auto; max-width: none; border-collapse: collapse; font-size: calc(15px * var(--tbl-s, 1)); }
+        .tbl-ov-body td, .tbl-ov-body th { font-size: inherit !important; padding: 5px 9px; }
+
+        
+        /* ===== Bổ sung của bộ chuyển đổi TeX2HTML (PyQt6) ===== */
+        .tp { margin: 6px 0; }
+        .center { text-align: center; }
+        /* Huy hiệu mức độ khó (suy ra từ ID câu hỏi, HTML bài giảng) */
+        .lvl { display: inline-block; margin-left: 8px; padding: 1px 10px; border-radius: 12px; border: 1px solid; font-size: 12px; font-weight: bold; line-height: 1.6; white-space: nowrap; vertical-align: middle; cursor: help; }
+        .lvl .dots { letter-spacing: 1px; margin-right: 4px; }
+        .lvl.lv1 { background: #e6f4ea; border-color: #34a853; color: #1b6b32; }
+        .lvl.lv2 { background: #e3f0fb; border-color: #4a90d9; color: #0d47a1; }
+        .lvl.lv3 { background: #fff3e0; border-color: #fb8c00; color: #8a4b00; }
+        .lvl.lv4 { background: #fdeaea; border-color: #e53935; color: #a31515; }
+        .figure svg, .figure img { max-width: 100%; height: auto; }
+        .fig-error { color: #b00020; border: 1px dashed #b00020; padding: 6px 10px; text-align: center; margin: 8px 0; font-size: 14px; }
+        .fbox { border: 1px solid currentColor; padding: 0 4px; }
+        blockquote { margin: 8px 20px; }
+        img { max-width: 100%; height: auto; }
+        ul, ol { margin: 6px 0; padding-left: 24px; }
+        ul.desc, li.cl { list-style: none; }
+        li.cl .lbl { font-weight: bold; margin-right: .4em; }
+        ol[class^="paren-"] { list-style: none; counter-reset: pc; padding-left: 2.2em; }
+        ol[class^="paren-"] > li { counter-increment: pc; position: relative; margin: 4px 0; }
+        ol[class^="paren-"] > li::before { position: absolute; left: -2.2em; width: 2em; text-align: right; font-weight: bold; }
+        ol.paren-a > li::before { content: counter(pc, lower-alpha) ")"; }
+        ol.paren-A > li::before { content: counter(pc, upper-alpha) ")"; }
+        ol.paren-i > li::before { content: counter(pc, lower-roman) ")"; }
+        ol.paren-I > li::before { content: counter(pc, upper-roman) ")"; }
+        ol.paren-1 > li::before { content: counter(pc, decimal) ")"; }
+        table.tex-table { border-collapse: collapse; margin: 8px auto; }
+        table.tex-table td { padding: 4px 10px; }
+        table.tex-table.bordered td { border: 1px solid #555; }
+        .tex-fa { margin: 0 .25em; font-style: normal; }
+        .nbox { border: 1px solid #b3d4fc; border-left: 4px solid #1e88e5; border-radius: 6px; margin: 8px 0; background: #f7fbff; text-align: left; }
+        .nbox-h { font-weight: bold; padding: 4px 10px; background: #e8f4fc; border-radius: 6px 6px 0 0; }
+        .nbox-b { padding: 2px 10px 6px; }
+        .nbox-sub { font-weight: normal; font-style: italic; }
+        .nbox.n-k-def { border-left-color: #1e88e5; }
+        .nbox.n-k-thm { border-left-color: #8e44ad; }
+        .nbox.n-k-note { border-left-color: #43a047; }
+        .nbox.n-k-warn { border-left-color: #e53935; }
+        .nbox.n-k-key { border-left-color: #fb8c00; }
+        .nbox.n-k-sum { border-left-color: #00838f; }
+        .nbox.n-k-try, .nbox.n-k-ask { border-left-color: #6d4c41; }
+
+
+ 
+        /* ---- THANH ĐIỀU HƯỚNG CỐ ĐỊNH Ở CUỐI TRANG (kèm footer) ---- */
+        body { padding-bottom: 64px; }
+        .question { scroll-margin-top: 84px; }
+        .question.flash { animation: flash 1.6s ease; }
+        @keyframes flash { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,152,0,0); } 30% { box-shadow: 0 0 0 6px rgba(255,152,0,.7); } }
+        .navbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; background: #fff; border-top: 2px solid #b3d4fc; box-shadow: 0 -2px 8px rgba(0,0,0,.08); padding: 6px 12px; }
+        .navin { max-width: 820px; margin: auto; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .nbtn { background: #1e88e5; color: #fff; border: none; border-radius: 4px; padding: 6px 12px; font-weight: bold; cursor: pointer; font-size: 13px; white-space: nowrap; }
+        .nbtn:hover { background: #1565c0; }
+        .jump { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #1565c0; font-weight: bold; white-space: nowrap; }
+        .jump input { width: 62px; padding: 5px 6px; border: 2px solid #1e88e5; border-radius: 4px; font-size: 14px; text-align: center; }
+        .nav-credit { margin-left: auto; font-size: 12px; color: #5f7b94; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40%; }
+        .nav-credit:empty { display: none; }
+        #tocModal .mbox { max-width: 540px; }
+        .tocleg { display: flex; flex-wrap: wrap; gap: 6px 10px; justify-content: center; margin: 8px 0 10px; font-size: 12px; }
+        .tocleg span { padding: 1px 9px; border: 2px solid; border-radius: 12px; }
+        .tocgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 7px; margin-bottom: 14px; }
+        .tocitem { min-height: 40px; border: 2px solid; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .tocitem:hover { filter: brightness(.94); }
+        .t-none { background: #e2eefb; border-color: #1e88e5; color: #0d47a1; }
+        .t-correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .t-wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .t-partial { background: #fff3cd; border-color: #ff9800; color: #7a4b00; }
+        @media (max-width: 600px) {
+            main { padding: 10px; } .question { padding: 10px; } .tfc { flex-basis: 100%; }
+            body { padding-bottom: 92px; }
+            .navin { justify-content: center; }
+            .nav-credit { flex-basis: 100%; max-width: 100%; margin-left: 0; text-align: center; font-size: 11px; }
+        }
+    </style>
+ 
+    <script>
+        window.MathJax = {
+          tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']], processEscapes: true, macros: {"wideparen": ["\\overset{\\frown}{#1}", 1], "overarc": ["\\overset{\\frown}{#1}", 1]} },
+          startup: { typeset: false },
+          options: { enableMenu: false }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+</head>
+<body>
+    <div class="topbar">
+        <div class="row">
+            <h1>Đề kiểm tra</h1>
+            <div style="display:flex; gap:8px; align-items:center;">
+                <span class="stats" id="stStats"></span>
+                <button type="button" class="tbtn" id="btnResult">Kết quả</button>
+            </div>
+        </div>
+        <div class="bar"><i id="barFill"></i></div>
+    </div>
+ 
+    <main>
+        <details class="settings">
+            <summary>⚙ Tuỳ chọn luyện tập</summary>
+            <div class="setrow">
+                <label><input type="checkbox" id="optSQ"> Trộn thứ tự câu hỏi</label>
+                <label><input type="checkbox" id="optSC"> Trộn thứ tự phương án (phần 1)</label>
+                <label><input type="checkbox" id="optHide"> Ẩn các câu đã làm đúng</label>
+            </div>
+            <div class="setbtns">
+                <button type="button" class="sbtn" id="btnRetry">Làm lại câu chưa đúng</button>
+                <button type="button" class="sbtn warn" id="btnRestart">Làm lại từ đầu</button>
+            </div>
+            <div id="note"></div>
+        </details>
+ 
+        <section class="part" data-part="1" data-off="0" data-cont="0"><h3 class="parttitle">PHẦN 1. Câu trắc nghiệm nhiều phương án lựa chọn</h3><div class="qlist"><div class="question" id="q_P1_1" data-id="P1_1" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">1</span>:</b> Cho mẫu số liệu ghép nhóm về chiều cao (đơn vị: cm) của một số cây xoài giống: <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Chiều cao (cm)</td><td style="text-align:center">$[0;5)$</td><td style="text-align:center">$[5;10)$</td><td style="text-align:center">$[10;15)$</td><td style="text-align:center">$[15;20)$</td></tr><tr><td style="text-align:center">Số cây</td><td style="text-align:center">$6$</td><td style="text-align:center">$16$</td><td style="text-align:center">$13$</td><td style="text-align:center">$3$</td></tr></table></div></div></div> Trung vị của mẫu số liệu ghép nhóm trên thuộc nhóm nào?</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$[10;15)$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$[0;5)$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$[5;10)$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$[15;20)$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Tổng số cây: $N = 6+16+13+3 = 38$. <br> Vị trí trung vị là $\dfrac{N}{2} = 19$. <br> Vị trí $19$ rơi vào nhóm $[5;10)$.</div></div></div>
+<div class="question" id="q_P1_2" data-id="P1_2" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">2</span>:</b> Một cuộc khảo sát về thời gian sử dụng (đơn vị: tháng) tủ lạnh của $100$ hộ gia đình được ghi lại như sau <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Thời gian</td><td style="text-align:center">$[0;12)$</td><td style="text-align:center">$[12;24)$</td><td style="text-align:center">$[24;36)$</td><td style="text-align:center">$[36;48) $</td><td style="text-align:center">$[48;60)$</td><td style="text-align:center">$[60;72)$</td></tr><tr><td style="text-align:center">Số hộ</td><td style="text-align:center">$12$</td><td style="text-align:center">$39$</td><td style="text-align:center">$23$</td><td style="text-align:center">$16$</td><td style="text-align:center">$8$</td><td style="text-align:center">$2$</td></tr></table></div></div></div> Trung vị của mẫu số liệu ghép nhóm trên là:</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$21$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$23{,}69$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$36{,}75$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$27$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> $N=100$, ta có $\dfrac{N}{2} = 50$. <br> Vậy trung vị thuộc lớp $[12;24)$. \[
+			Me = 12 + \dfrac{50-12}{39}\cdot 12 \approx 23{,}69.
+			\]</div></div></div>
+<div class="question" id="q_P1_3" data-id="P1_3" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">3</span>:</b> Cự li (m) $40$ lần ném lao của một vận động viên được ghi lại như sau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Cự li</td><td style="text-align:center">$[69{,}4;70{,}2)$</td><td style="text-align:center">$[70{,}2;71)$</td><td style="text-align:center">$[71;71{,}8)$</td><td style="text-align:center">$[71{,}8;72{,}6)$</td><td style="text-align:center">$[72{,}6;73{,}4)$</td></tr><tr><td style="text-align:center">Số lần</td><td style="text-align:center">$5$</td><td style="text-align:center">$2$</td><td style="text-align:center">$ 11$</td><td style="text-align:center">$15$</td><td style="text-align:center">$7$</td></tr></table></div> </span></div></div> Tứ phân vị thứ ba của mẫu số liệu ghép nhóm trên là:</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$71,91$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$72{,}44$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$72{,}67$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$72{,}23$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> $N=40$, vị trí $Q_3 = \dfrac{3N}{4} = 30$. <br> Tần số tích lũy trước lớp $[71{,}8;72{,}6)$ là $18$. <br> \[
+			Q_3 = 71{,}8 + \dfrac{30-18}{15}\cdot 0{,}8 = 72{,}44.
+			\]</div></div></div>
+<div class="question" id="q_P1_4" data-id="P1_4" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">4</span>:</b> Một trường THPT mở cuộc kiểm tra tốc độ gõ phím (từ/phút) của học sinh toàn trường: <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Tốc độ</td><td style="text-align:center">$[50;60)$</td><td style="text-align:center">$[60;70)$</td><td style="text-align:center">$[70;80)$</td><td style="text-align:center">$[80;90)$</td><td style="text-align:center">$[90;100)$</td></tr><tr><td style="text-align:center">Số HS</td><td style="text-align:center">$231$</td><td style="text-align:center">$194$</td><td style="text-align:center">$225$</td><td style="text-align:center">$123$</td><td style="text-align:center">$74$</td></tr></table></div></div></div> Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là:</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$20{,}34$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$19{,}8$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$19{,}63$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$20{,}18$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> $N = 847$. <br> $Q_1$ ở vị trí $\dfrac{N}{4} = 211{,}75$ $\Rightarrow$ thuộc lớp $[50;60)$.<br> $Q_3$ ở vị trí $\dfrac{3N}{4} = 635{,}25$ $\Rightarrow$ thuộc lớp $[70;80)$. <br> Vậy: \[
+			Q_1 = 50 + \dfrac{211{,}75}{231}\cdot 10 = 59{,}16.
+			\] \[
+			Q_3 = 70 + \dfrac{635{,}25 - 425}{225}\cdot 10 = 78{,}79.
+			\] \[
+			\Delta_Q = Q_3 - Q_1=19{,}63.
+			\]</div></div></div>
+<div class="question" id="q_P1_5" data-id="P1_5" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">5</span>:</b> Cô Hà thống kê lại đường kính thân gỗ của một số cây xoan đào $6$ năm tuổi được trồng ở một lâm trường ở bảng&nbsp;sau. <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Đường kính (cm)</td><td style="text-align:center">$[40;45)$</td><td style="text-align:center">$[45;50)$</td><td style="text-align:center">$[50;55)$</td><td style="text-align:center">$[55;60)$</td><td style="text-align:center">$[60;65)$</td></tr><tr><td style="text-align:center">Tần số</td><td style="text-align:center">$5$</td><td style="text-align:center">$20$</td><td style="text-align:center">$18$</td><td style="text-align:center">$7$</td><td style="text-align:center">$3$</td></tr></table></div></div></div> Hãy tìm khoảng biến thiên của mẫu số liệu ghép nhóm trên.</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$25$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$30$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$6$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$69{,}8$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Khoảng biến thiên của mẫu số liệu ghép nhóm trên là $65-40=25$ (cm).</div></div></div>
+<div class="question" id="q_P1_6" data-id="P1_6" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">6</span>:</b> Bảng dưới biểu diễn mẫu số liệu ghép nhóm về số tiền (đơn vị: nghìn đồng) mà $60$ khách hàng mua sách ở một cửa hàng trong một ngày. Khoảng biến thiên của mẫu số liệu ghép nhóm trên là</div><div class="tp"><div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Nhóm</td><td style="text-align:center">Tần số</td></tr><tr><td style="text-align:center">$[40;50)$</td><td style="text-align:center">$3$</td></tr><tr><td style="text-align:center">$[50;60)$</td><td style="text-align:center">$6$</td></tr><tr><td style="text-align:center">$[60;70)$</td><td style="text-align:center">$19$</td></tr><tr><td style="text-align:center">$[70;80)$</td><td style="text-align:center">$23$</td></tr><tr><td style="text-align:center">$[80;90)$</td><td style="text-align:center">$9$</td></tr><tr><td style="text-align:center"></td><td style="text-align:center">$n=60$</td></tr></table></div></div></div></div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$50$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$30$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$6$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$69{,}8$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Khoảng biến thiên của mẫu số liệu ghép nhóm trên là $R=90-40=50$.</div></div></div>
+<div class="question" id="q_P1_7" data-id="P1_7" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">7</span>:</b> Mỗi ngày bác Hương đều đi bộ để rèn luyện sức khoẻ. Quãng đường đi bộ mỗi ngày (đơn vị: km) của bác Hương trong $20$ ngày được thống kê lại ở bảng&nbsp;sau <div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Quãng đường (km)</td><td style="text-align:center">$[2{,}7;3{,}0)$</td><td style="text-align:center">$[3{,}0;3{,}3)$</td><td style="text-align:center">$[3{,}3;3{,}6)$</td><td style="text-align:center">$[3{,}6;3{,}9)$</td><td style="text-align:center">$[3{,}9;4{,}2)$</td></tr><tr><td style="text-align:center">Số ngày</td><td style="text-align:center">$3$</td><td style="text-align:center">$6$</td><td style="text-align:center">$5$</td><td style="text-align:center">$4$</td><td style="text-align:center">$2$</td></tr></table></div> </span></div></div> Khoảng biến thiên của mẫu số liệu ghép nhóm là</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$1{,}5$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$0{,}9$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$0{,}6$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$0{,}3$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Khoảng biến thiên của mẫu số liệu ghép nhóm là $4{,}2-2{,}7=1{,}5$ (km).</div></div></div>
+<div class="question" id="q_P1_8" data-id="P1_8" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">8</span>:</b> Bạn Chi rất thích nhảy hiện đại. Thời gian tập nhảy mỗi ngày trong thời gian gần đây của bạnn Chi được thống kê lại ở bảng&nbsp;sau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Thời gian (phút)</td><td style="text-align:center">$[20;25)$</td><td style="text-align:center">$[25;30)$</td><td style="text-align:center">$[30;35)$</td><td style="text-align:center">$[35;40)$</td><td style="text-align:center">$[40;45)$</td></tr><tr><td style="text-align:center">Số ngày</td><td style="text-align:center">$6$</td><td style="text-align:center">$6$</td><td style="text-align:center">$4$</td><td style="text-align:center">$1$</td><td style="text-align:center">$1$</td></tr></table></div> </span></div></div> Khoảng biến thiên của mẫu số liệu ghép nhóm là</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$25$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$20$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$15$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$30$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Khoảng biến thiên của mẫu số liệu ghép nhóm là $45-20=25$ (phút).</div></div></div>
+<div class="question" id="q_P1_9" data-id="P1_9" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">9</span>:</b> Một vườn thú ghi lại tuổi thọ (đơn vị: năm) của $20$ con hổ và thu được kết quả như sau <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Tuổi thọ</td><td style="text-align:center">$[14;15)$</td><td style="text-align:center">$[15;16)$</td><td style="text-align:center">$[16;17)$</td><td style="text-align:center">$[17;18)$</td><td style="text-align:center">$[18;19)$</td></tr><tr><td style="text-align:center">Số con hổ</td><td style="text-align:center">$1$</td><td style="text-align:center">$3$</td><td style="text-align:center">$8$</td><td style="text-align:center">$6$</td><td style="text-align:center">$2$</td></tr></table></div></div></div> Khoảng biến thiên của mẫu số liệu ghép nhóm này là</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$3$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$4$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$5$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$6$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Khoảng biến thiên của mẫu số liệu ghép nhóm này là $19-14=5$.</div></div></div>
+<div class="question" id="q_P1_10" data-id="P1_10" data-kind="mc" data-part="1"><div class="qtext"><div class="tp"><b>Câu <span class="qno">10</span>:</b> Một nhân viên cây xăng đã ghi lại số tiền (đơn vị: nghìn đồng) bán xăng cho $50$ khách hàng:</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Số tiền</td><td style="text-align:center">$[0;20)$</td><td style="text-align:center">$[20;40)$</td><td style="text-align:center">$[40;60)$</td><td style="text-align:center">$[60;80)$</td><td style="text-align:center">$[80;100)$</td><td style="text-align:center">$[100;120)$</td></tr><tr><td style="text-align:center">Số KH</td><td style="text-align:center">$3$</td><td style="text-align:center">$7$</td><td style="text-align:center">$23$</td><td style="text-align:center">$11$</td><td style="text-align:center">$5$</td><td style="text-align:center">$1$</td></tr></table></div> </span></div></div> Khoảng tứ phân vị của mẫu số liệu ghép nhóm trên là bao nhiêu?</div></div><div class="opts"><div class="opt" tabindex="0" role="button" data-k="A"><span class="lab"></span><div class="ob">$26$</div></div><div class="opt" tabindex="0" role="button" data-k="B"><span class="lab"></span><div class="ob">$12$</div></div><div class="opt" tabindex="0" role="button" data-k="C"><span class="lab"></span><div class="ob">$21$</div></div><div class="opt" tabindex="0" role="button" data-k="D"><span class="lab"></span><div class="ob">$22$</div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Tổng số $N=50$. <br> Vị trí $Q_1$: $\dfrac{N}{4} =\dfrac{50}{4}= 12{,}5$. Vậy $Q_1$ thuộc nhóm $[40;60)$. <br> Vị trí $Q_3$: $\dfrac{3N}{4} = 37{,}5$ .Vậy $Q_3$ thuộc nhóm $[60;80)$. <br> Suy ra \[
+			Q_1 = 40 + \dfrac{12{,}5-10}{23}\cdot 20 \approx 42{,}17,
+			\] \[
+			Q_3 = 60 + \dfrac{37{,}5-33}{11}\cdot 20 \approx 68{,}18.
+			\] \[
+			\Delta_Q \approx Q_3 - Q_1 \approx 26.
+			\]</div></div></div></div></section>
+<section class="part" data-part="2" data-off="0" data-cont="0"><h3 class="parttitle">PHẦN 2. Câu trắc nghiệm đúng sai</h3><div class="qlist"><div class="question" id="q_P2_1" data-id="P2_1" data-kind="tf" data-part="2"><div class="qtext"><div class="tp"><b>Câu <span class="qno">1</span>:</b> Bảng sau thống kê tổng lượng mưa (đơn vị: mm) đo được vào tháng $7$ từ năm $2\,002$ đến $2\,021$ tại một trạm quan trắc đặt ở Cà&nbsp;Mau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">$341{,}4$</td><td style="text-align:center">$187{,}1$</td><td style="text-align:center">$242{,}2$</td><td style="text-align:center">$522{,}9$</td><td style="text-align:center">$251{,}4$</td><td style="text-align:center">$432{,}2$</td><td style="text-align:center">$200{,}7$</td><td style="text-align:center">$388{,}6$</td><td style="text-align:center">$258{,}4$</td><td style="text-align:center">$288{,}5$</td></tr><tr><td style="text-align:center">$298{,}1$</td><td style="text-align:center">$413{,}5$</td><td style="text-align:center">$413{,}5$</td><td style="text-align:center">$332$</td><td style="text-align:center">$421$</td><td style="text-align:center">$475$</td><td style="text-align:center">$400$</td><td style="text-align:center">$305$</td><td style="text-align:center">$520$</td><td style="text-align:center">$1477$</td></tr></table></div> </span></div></div> Chia mẫu số liệu trên thành $4$ nhóm như bảng <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Lượng mưa</td><td style="text-align:center">$[140;240)$</td><td style="text-align:center">$[240;340)$</td><td style="text-align:center">$[340;440)$</td><td style="text-align:center">$[440;540)$</td></tr><tr><td style="text-align:center">Số tháng</td><td style="text-align:center">$3$</td><td style="text-align:center">$7$</td><td style="text-align:center">$7$</td><td style="text-align:center">$3$</td></tr></table></div></div></div></div></div><div class="opts"><div class="tfrow" data-k="a" data-ans="Đúng"><div class="tfc"><b>a.</b> Khoảng biến thiên của mẫu số liệu $375{,}9$&thinsp;(mm)</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="b" data-ans="Sai"><div class="tfc"><b>b.</b> Khoảng tứ phân vị của mẫu số liệu là $\Delta_Q=\dfrac{1\,827}{100}$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="c" data-ans="Đúng"><div class="tfc"><b>c.</b> Khoảng biến thiên của mẫu số liệu ghép nhóm $400$ (mm)</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="d" data-ans="Đúng"><div class="tfc"><b>d.</b> Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q ^{'}=\dfrac{1\,000}{7}$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> <ol class="paren-a"><li>Sắp xếp lại mẫu số liệu theo thứ tự tăng dần <div class="center"><div class="tp">$\begin{array}{cccccccccc}
+						147&amp;187{,}1&amp;200{,}7 &amp;242{,}2&amp;251{,}4&amp;258{,}4&amp; 288{,}5&amp; 298{,}1&amp; 305&amp;332\\
+						341{,}4&amp; 388{,}6&amp; 400&amp; 413{,}5&amp; 413{,}5&amp; 421&amp; 432{,}2&amp;475&amp; 520&amp; 522{,}9
+				\end{array}$</div></div> Khoảng biến thiên của mẫu số liệu $522,9-147=375,9$ (mm).</li><li>Tứ phân vị thứ nhất của mẫu số liệu là trung vị của <div class="center"><div class="tp">$\begin{array}{cccccccccc}
+					147 &amp;187{,}1 &amp;200{,}7 &amp;242{,}2 &amp;251{,}4 &amp;258{,}4 &amp;288{,}5 &amp;298{,}1 &amp;305 &amp;332
+				\end{array}$</div></div> Do đó \[
+			Q_1=\dfrac{251{,}4+258{,}4}{2}=254{,}9.
+			\].<br> Tứ phân vị thứ ba của mẫu số liệu là trung vị của <div class="center"><div class="tp">$\begin{array}{cccccccccc}
+					341{,}4 &amp;388{,}6 &amp;400 &amp;413{,}5 &amp;413{,}5 &amp;421 &amp;432{,}2 &amp;475 &amp;520 &amp;522{,}9
+				\end{array}$</div></div> Do đó \[
+			Q_3=\dfrac{413{,}5+421}{2}=417{,}25.
+			\] Khoảng tứ phân vị của mẫu số liệu là: \[
+			\Delta_Q = Q_3 - Q_1 = 417{,}25 - 254{,}9 = 162{,}35.
+			\]</li><li>Khoảng biến thiên của mẫu số liệu ghép nhóm $540-140=400$ (mm). Cỡ mẫu $n=20$;<br> Gọi $x_1;x_2;\ldots;x_{20}$ là mẫu số liệu gốc về lượng mưa đo được vào tháng $7$ từ năm $2\,002$ đến $2\,021$ tại một trạm quan trắc đặt ở Cà Mau được xếp theo thứ tự không giảm.<br> Ta có <ul><li>$x_1;\ldots;x_3 \in [140;240)$;</li><li>$x_4;\ldots;x_{10} \in [240;340)$;</li><li>$x_{11};\ldots;x_{17} \in [340;440)$;</li><li>$x_{18};\ldots;x_{20} \in [440;540)$.</li></ul> Tứ phân vị thứ nhất của mẫu số liệu gốc là $\dfrac{1}{2} \left(x_5+x_6 \right)\in [240;340)$.<br> Do đó, tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q'_1 =240+\dfrac{\dfrac{20}{4}-3}{7} (340-240)=\dfrac{1\,880}{7}.\] Tứ phân vị thứ ba của mẫu số liệu gốc là $\dfrac{1}{2} \left(x_{15}+x_{16} \right)\in [340;440)$. <br> Do đó, tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q_3 ^{{'}}=340+\dfrac{\dfrac{3.20}{4}-(3+7)}{7} (440-340)=\dfrac{2\,880}{7}.\]</li><li>Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q'=Q'_3-Q'_1=\dfrac{1\,000}{7}$.<br> Khoảng biến thiên của mẫu số liệu ghép nhóm lớn hơn mẫu số liệu; khoảng tứ phân vị của mẫu số liệu ghép nhóm nhỏ hơn mẫu số liệu.</li></ol></div></div></div>
+<div class="question" id="q_P2_2" data-id="P2_2" data-kind="tf" data-part="2"><div class="qtext"><div class="tp"><b>Câu <span class="qno">2</span>:</b> Thống kê điểm trung bình môn Toán của một số học sinh lớp $11$ được cho ở bảng&nbsp;sau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Khoảng điểm</td><td style="text-align:center">$[6{,}5;7)$</td><td style="text-align:center">$[7;7{,}5)$</td><td style="text-align:center">$[7{,}5;8)$</td><td style="text-align:center">$[8;8{,}5)$</td><td style="text-align:center">$[8{,}5;9)$</td><td style="text-align:center">$[9;9{,}5)$</td><td style="text-align:center">$[9{,}5;10)$</td></tr><tr><td style="text-align:center">Tần số</td><td style="text-align:center">$8$</td><td style="text-align:center">$10$</td><td style="text-align:center">$16$</td><td style="text-align:center">$24$</td><td style="text-align:center">$13$</td><td style="text-align:center">$7$</td><td style="text-align:center">$4$</td></tr></table></div> </span></div></div></div></div><div class="opts"><div class="tfrow" data-k="a" data-ans="Đúng"><div class="tfc"><b>a.</b> Khoảng biến thiên của mẫu số liệu là $R=4$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="b" data-ans="Đúng"><div class="tfc"><b>b.</b> Số trung bình của mẫu số liệu xấp xỉ bằng $8{,}12$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="c" data-ans="Sai"><div class="tfc"><b>c.</b> Mốt của mẫu số liệu là $6{,}21$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="d" data-ans="Sai"><div class="tfc"><b>d.</b> Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=2{,}05$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Khoảng điểm</td><td style="text-align:center">$[6{,}5;7)$</td><td style="text-align:center">$[7;7{,}5)$</td><td style="text-align:center">$[7{,}5;8)$</td><td style="text-align:center">$[8;8{,}5)$</td><td style="text-align:center">$[8{,}5;9)$</td><td style="text-align:center">$[9;9{,}5)$</td><td style="text-align:center">$[9{,}5;10)$</td></tr><tr><td style="text-align:center">Giá trị đại diện</td><td style="text-align:center">$6{,}75$</td><td style="text-align:center">$7{,}25$</td><td style="text-align:center">$7{,}75$</td><td style="text-align:center">$8{,}25$</td><td style="text-align:center">$8{,}75$</td><td style="text-align:center">$9{,}25$</td><td style="text-align:center">$9{,}75$</td></tr><tr><td style="text-align:center">Tần số</td><td style="text-align:center">$8$</td><td style="text-align:center">$10$</td><td style="text-align:center">$16$</td><td style="text-align:center">$24$</td><td style="text-align:center">$13$</td><td style="text-align:center">$7$</td><td style="text-align:center">$4$</td></tr></table></div></div></div> <ol class="paren-a"><li>Khoảng biến thiên của mẫu số liệu là $R=4$.</li><li>Số trung bình của mẫu số liệu xấp xỉ bằng \[\left(6{,}75\cdot 8+7{,}25\cdot 10+7{,}75\cdot 16+8{,}25\cdot 24+8{,}75\cdot 13+9{,}25\cdot 7+9{,}75\cdot 4\right):82=8{,}12.
+			\]</li><li>Nhóm chứa mốt của mẫu số liệu là $[8;8{,}5)$.<br> Mốt của mẫu số liệu là $M_0=8+\dfrac{24-16}{(24-16)+(24-13)} \cdot (8{,}5-8)=8{,}21$.</li><li>Gọi $x_1;x_2;x_3;\ldots;x_{85}$ lần lượt là tần số theo thứ tự không giảm.<br> Ta có <ul><li>$x_1, \ldots, x_8 \in [6{,}5;7)$;</li><li>$x_9, \ldots, x_{18} \in [7;7{,}5)$;</li><li>$x_{19}, \ldots, x_{34} \in [7{,}5;8)$;</li><li>$x_{35}, \ldots, x_{58} \in [8;8{,}5)$;</li><li>$x_{59}, \ldots, x_{71} \in [8{,}5;9);\ldots$.</li></ul> Tứ phân vị thứ hai của dãy số liệu là $\dfrac{1}{2} \left(x_{41}+x_{42} \right)$ thuộc nhóm $[8;8{,}5)$ nên tứ phân vị thứ hai của mẫu số liệu là \[Q_2=8+\dfrac{\dfrac{82}{2}-34}{24} (8{,}5-8)=8{,}15.\] Tứ phân vị thứ nhất của dãy số liệu là $\dfrac{1}{2} \left(x_{20}+x_{21} \right)$ thuộc nhóm $[7{,}5;8)$ nên tứ phân vị thứ nhất của mẫu số liệu là \[Q_1=7{,}5+\dfrac{\dfrac{82}{4}-18}{16} (8-7{,}5)=7{,}58.\] Tứ phân vị thứ ba của dãy số liệu là $\dfrac{1}{2} \left(x_{61}+x_{62} \right)$ thuộc nhóm $[8{,}5;9)$ nên tứ phân vị thứ ba của mẫu số liệu là \[Q_3=8{,}5+\dfrac{\dfrac{3\cdot 82}{4}-58}{13} (9-8{,}5)=8{,}63.\] Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=1{,}05$.</li></ol></div></div></div>
+<div class="question" id="q_P2_3" data-id="P2_3" data-kind="tf" data-part="2"><div class="qtext"><div class="tp"><b>Câu <span class="qno">3</span>:</b> Giả sử kết quả khảo sát hai khu vực A và B về độ tuổi kết hôn của một số phụ nữ vừa lập gia đình được cho ở bảng&nbsp;sau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Tuổi kết hôn</td><td style="text-align:center">$[19;22)$</td><td style="text-align:center">$[22;25)$</td><td style="text-align:center">$[25;28)$</td><td style="text-align:center">$[28;31)$</td><td style="text-align:center">$[31;34)$</td></tr><tr><td style="text-align:center">Số phụ nữ khu vực A</td><td style="text-align:center">$10$</td><td style="text-align:center">$27$</td><td style="text-align:center">$31$</td><td style="text-align:center">$25$</td><td style="text-align:center">$7$</td></tr><tr><td style="text-align:center">Số phụ nữ khu vực B</td><td style="text-align:center">$47$</td><td style="text-align:center">$40$</td><td style="text-align:center">$11$</td><td style="text-align:center">$2$</td><td style="text-align:center">$0$</td></tr></table></div> </span></div></div></div></div><div class="opts"><div class="tfrow" data-k="a" data-ans="Đúng"><div class="tfc"><b>a.</b> Khoảng biến thiên của mẫu số liệu ghép nhóm ứng với khu vực A là $15$ (tuổi)</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="b" data-ans="Đúng"><div class="tfc"><b>b.</b> Khoảng biến thiên của mẫu số liệu ghép nhóm ứng với khu vực B là $12$ (tuổi)</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="c" data-ans="Sai"><div class="tfc"><b>c.</b> Khoảng tứ phân vị của mẫu số liệu ghép ứng với khu vực A là $\Delta_Q=\dfrac{61}{3}$ (tuổi)</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="d" data-ans="Đúng"><div class="tfc"><b>d.</b> Nếu so sánh theo khoảng tứ phân vị thì phụ nữ ở khu vực B có độ tuổi kết hôn đồng đều hơn</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> <ol class="paren-a"><li>Khoảng biến thiên của mẫu số liệu ghép nhóm ứng với khu vực A là $34-19=15$ (tuổi).</li><li>Khoảng biến thiên của mẫu số liệu ghép nhóm ứng với khu vực B là $31-19=12$ (tuổi).</li><li>Cỡ mẫu $n=100$.<br> Ta có $\dfrac{n}{4}=\dfrac{100}{4}=25$.<br> Tứ phân vị thứ nhất của mẫu số liệu gốc thuộc nhóm $[22;25)$. <br> Do đó, tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q_1=22+\dfrac{\dfrac{100}{4}-10}{27} (25-22)=\dfrac{71}{3}.\] Ta có $\dfrac{3n}{4}=\dfrac{3\cdot 100}{4}=75$.<br> Tứ phân vị thứ ba của mẫu số liệu gốc thuộc nhóm $[28;31)$. <br> Do đó, tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q_3=25+\dfrac{\dfrac{3\cdot 100}{4}-(10+27+31)}{25} (31-28)=\dfrac{721}{25}.\] Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=Q_3-Q_1=\dfrac{388}{75}$.</li><li>Tứ phân vị thứ nhất của mẫu số liệu gốc của khu vực B thuộc nhóm $ [19;22)$. <br> Do đó, tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q'_1 =19+\dfrac{\dfrac{100}{4}}{47} (22-19)=\dfrac{968}{47}.\] Tứ phân vị thứ ba của mẫu số liệu gốc của khu vực B thuộc nhóm $ [22;25)$. <br> Do đó, tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q'_3 =22+\dfrac{\dfrac{3\cdot 100}{4}-47}{40} (25-22)=\dfrac{241}{10}.\] Vậy khoảng tứ phân vị của khu vực B là $\Delta_Q'=Q_3'-Q_1'=\dfrac{241}{10}-\dfrac{968}{47}=\dfrac{1647}{470}$.<br> Vì $\dfrac{1647}{470}&lt;\dfrac{388}{75}$ suy ra $\Delta_Q' &lt; \Delta_Q$ nên phụ nữ ở khu vực B có độ tuổi kết hôn đồng đều hơn.</li></ol></div></div></div>
+<div class="question" id="q_P2_4" data-id="P2_4" data-kind="tf" data-part="2"><div class="qtext"><div class="tp"><b>Câu <span class="qno">4</span>:</b> Kết quả đo chiều cao của $100$ cây keo $3$ năm tuổi tại một nông trường được cho ở bảng&nbsp;sau</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Chiều cao (m)</td><td style="text-align:center">$[8{,}4;8{,}6)$</td><td style="text-align:center">$[8{,}6;8{,}8)$</td><td style="text-align:center">$[8{,}8;9{,}0)$</td><td style="text-align:center">$[9{,}2;9{,}4)$</td><td style="text-align:center">$[9{,}0;9{,}2)$</td></tr><tr><td style="text-align:center">Số cây</td><td style="text-align:center">$5$</td><td style="text-align:center">$12$</td><td style="text-align:center">$25$</td><td style="text-align:center">$44$</td><td style="text-align:center">$14$</td></tr></table></div> </span></div></div></div></div><div class="opts"><div class="tfrow" data-k="a" data-ans="Đúng"><div class="tfc"><b>a.</b> Khoảng biên thiên của mẫu số liệu ghép nhóm $1$&thinsp;m</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="b" data-ans="Đúng"><div class="tfc"><b>b.</b> Tứ phân vị thứ ba của mẫu số liệu ghép nhóm là $Q_3=10{,}5$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="c" data-ans="Sai"><div class="tfc"><b>c.</b> Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=2{,}06$</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div><div class="tfrow" data-k="d" data-ans="Sai"><div class="tfc"><b>d.</b> Trong $100$ cây keo trên có $1$ cây cao $8{,}4$&thinsp;m thì chiều cao của cây keo này là giá trị ngoại lệ</div><div class="tfb"><button type="button" data-v="Đúng">Đúng</button><button type="button" data-v="Sai">Sai</button></div></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> <ol class="paren-a"><li>Khoảng biên thiên của mẫu số liệu ghép nhóm $9{,}4-8{,}4=1$&thinsp;(m).</li><li>Cỡ mẫu $n=100$;<br> Gọi $x_1;x_2;\ldots;x_{100}$ là mẫu số liệu gốc được xếp theo thứ tự không giảm.<br> Ta có <ul><li>$x_1;\ldots;x_5 \in [8{,}4;8{,}6)$;</li><li>$x_6;\ldots;x_{17} \in [8{,}6;8{,}8)$;</li><li>$x_{18};\ldots;x_{42} \in [8{,}8;9{,}0)$;</li><li>$x_{43};\ldots;x_{86} \in [9{,}0;9{,}2)$;</li><li>$x_{87};\ldots;x_{100} \in [9{,}2;9{,}4)$.</li></ul> Tứ phân vị thứ nhất của mẫu số liệu gốc là $\dfrac{1}{2} \left(x_{25}+x_{26} \right)\in [8{,}8;9{,}0)$.<br> Do đó, tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q_1=8{,}8+\dfrac{\dfrac{100}{4}-(5+12)}{25} (9{,}0-8{,}8)=9{,}44.\] Tứ phân vị thứ ba của mẫu số liệu gốc là $\dfrac{1}{2} \left(x_{75}+x_{76} \right)\in [9{,}0;9{,}2)$.<br> Do đó, tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q_3=9{,}0+\dfrac{\dfrac{3\cdot 100}{4}-\left(5+12+25\right)}{44} \left(9{,}2-9{,}0\right)=10{,}5.\]</li><li>Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=Q_3-Q_1=1{,}06$.</li><li>Giá trị $x$ trong mẫu số liệu là giá trị ngoại lệ nếu $x &gt; Q_3+1{,}5\Delta_Q$ hoặc $x &lt; Q_1-1{,}5\Delta_Q$.<br> Hay $x &gt; 10{,}5+1{,}5\cdot 1{,}06=12{,}09$ hoặc $x &lt; 9{,}44-1{,}5\cdot 1{,}06=7{,}85$.<br> Vậy cây cao $8{,}4$&thinsp;m không phải là giá trị ngoại lệ.</li></ol></div></div></div></div></section>
+<section class="part" data-part="3" data-off="0" data-cont="0"><h3 class="parttitle">PHẦN 3. Câu trắc nghiệm trả lời ngắn</h3><div class="qlist"><div class="question" id="q_P3_1" data-id="P3_1" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">1</span>:</b> Bảng dưới biểu diễn mẫu số liệu ghép nhóm về chiều cao (đơn vị: centimét) của $36$ học sinh nam lớp $12$ ở một trường trung học phổ thông.</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Nhóm</td><td style="text-align:center">$[160;163)$</td><td style="text-align:center">$[163;166)$</td><td style="text-align:center">$[166;169)$</td><td style="text-align:center">$[169;172)$</td><td style="text-align:center">$[172;175)$</td></tr><tr><td style="text-align:center">Tần số</td><td style="text-align:center">$6$</td><td style="text-align:center">$11$</td><td style="text-align:center">$9$</td><td style="text-align:center">$7$</td><td style="text-align:center">$3$</td></tr></table></div> </span></div></div> Tìm khoảng biến thiên của mẫu số liệu ghép nhóm đó.</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Trong mẫu số liệu ghép nhóm đó, ta có <ul><li>Đầu mút trái của nhóm $1$ là $a_1=160$.</li><li>Đầu mút phải của nhóm $5$ là $a_6=175$.</li></ul> Vậy khoảng biến thiên của mẫu số liệu ghép nhóm đó là $R=a_6-a_1=175-160=15$&thinsp;(cm).</div></div></div>
+<div class="question" id="q_P3_2" data-id="P3_2" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">2</span>:</b> Bảng dưới biểu diễn mẫu số liệu ghép nhóm vể chiều cao của $42$ mẫu cây ở một vườn thực vật (đơn vị: centimét). <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Nhóm</td><td style="text-align:center">$[40;45)$</td><td style="text-align:center">$[45;50)$</td><td style="text-align:center">$[50;55)$</td><td style="text-align:center">$[55;60)$</td><td style="text-align:center">$[60;65)$</td><td style="text-align:center">$[65;70)$</td></tr><tr><td style="text-align:center">Tần số</td><td style="text-align:center">$5$</td><td style="text-align:center">$10$</td><td style="text-align:center">$7$</td><td style="text-align:center">$9$</td><td style="text-align:center">$7$</td><td style="text-align:center">$4$</td></tr></table></div></div></div> Tính khoảng tứ phân vị của mẫu số liệu ghép nhóm đó (làm tròn kết quả đến hàng phẩn mười).</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Số phần tử của mẫu là $n=42$.<br> Ta có $\dfrac{n}{4}=\dfrac{42}{4}=10{,}5$. <br> Vậy tứ phân vị thứ nhất của mẫu số liệu ghép nhóm thuộc nhóm $[45;50)$. <br> Tứ phân vị của mẫu số liệu ghép nhóm \[Q_1=45+\left(\dfrac{10{,}5-5}{10} \right)\cdot 5=47{,}75\]<br> Ta có $\dfrac{3n}{4}=\dfrac{3\cdot 42}{4}=31{,}5$.<br> Vậy tứ phân vị thứ ba của mẫu số liệu ghép nhóm thuộc nhóm $[60;65)$.<br> Tứ phân vị thứ ba của mẫu số liệu ghép nhóm \[Q_3=60+\left(\dfrac{31{,}5-31}{7} \right)\cdot 5\approx 60{,}4.\] Vậy khoảng tứ phân vị của mẫu số liệu ghép nhóm đã cho là \[\Delta_Q=Q_3-Q_1 \approx 60{,}4-47{,}75=12{,}65\,\mathrm{(cm)}.\]</div></div></div>
+<div class="question" id="q_P3_3" data-id="P3_3" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">3</span>:</b> Một người thống kê lại thời gian thực hiện các cuộc gọi điện thoại của người đó trong một tuần ở bảng&nbsp;sau <div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive figure" style="text-align:center;margin:10px 0"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="396.513pt" height="53.816pt" viewBox="0 0 396.513 53.816" version="1.2"><defs><g><symbol overflow="visible" id="f1_glyph0-0"><path style="stroke:none;" d="" /></symbol><symbol overflow="visible" id="f1_glyph0-1"><path style="stroke:none;" d="M 7.781 -8.078 L 0.625 -8.078 L 0.422 -5.422 L 0.672 -5.422 C 0.844 -7.312 0.953 -7.734 2.844 -7.734 C 3.047 -7.734 3.391 -7.734 3.484 -7.719 C 3.719 -7.672 3.734 -7.531 3.734 -7.266 L 3.734 -0.922 C 3.734 -0.516 3.734 -0.344 2.562 -0.344 L 2.141 -0.344 L 2.141 0 C 2.516 -0.031 3.75 -0.031 4.203 -0.031 C 4.672 -0.031 5.906 -0.031 6.297 0 L 6.297 -0.344 L 5.859 -0.344 C 4.703 -0.344 4.703 -0.516 4.703 -0.922 L 4.703 -7.266 C 4.703 -7.562 4.719 -7.672 4.906 -7.719 C 5 -7.734 5.359 -7.734 5.578 -7.734 C 7.469 -7.734 7.578 -7.312 7.734 -5.422 L 8 -5.422 Z M 7.781 -8.078 " /></symbol><symbol overflow="visible" id="f1_glyph0-2"><path style="stroke:none;" d="M 5.312 -2.891 C 5.312 -4 5.312 -4.344 5.031 -4.719 C 4.688 -5.188 4.125 -5.25 3.719 -5.25 C 2.688 -5.25 2.219 -4.484 2.047 -4.109 L 2.031 -4.109 L 2.031 -8.281 L 0.375 -8.141 L 0.375 -7.797 C 1.188 -7.797 1.281 -7.719 1.281 -7.125 L 1.281 -0.875 C 1.281 -0.344 1.156 -0.344 0.375 -0.344 L 0.375 0 C 0.688 -0.031 1.328 -0.031 1.672 -0.031 C 2.016 -0.031 2.656 -0.031 2.969 0 L 2.969 -0.344 C 2.203 -0.344 2.062 -0.344 2.062 -0.875 L 2.062 -3.094 C 2.062 -4.344 2.891 -5.016 3.625 -5.016 C 4.359 -5.016 4.531 -4.406 4.531 -3.688 L 4.531 -0.875 C 4.531 -0.344 4.406 -0.344 3.625 -0.344 L 3.625 0 C 3.938 -0.031 4.578 -0.031 4.906 -0.031 C 5.25 -0.031 5.906 -0.031 6.219 0 L 6.219 -0.344 C 5.609 -0.344 5.312 -0.344 5.312 -0.703 Z M 5.312 -2.891 " /></symbol><symbol overflow="visible" id="f1_glyph0-3"><path style="stroke:none;" d="M 2.906 -5.312 C 2.219 -5.312 1.578 -5 1.094 -4.5 C 0.609 -3.969 0.359 -3.266 0.359 -2.547 C 0.359 -1.844 0.625 -1.156 1.094 -0.656 C 1.578 -0.172 2.234 0.125 2.906 0.125 C 3.594 0.125 4.25 -0.172 4.703 -0.656 C 5.203 -1.156 5.453 -1.844 5.453 -2.547 C 5.453 -3.25 5.219 -3.922 4.75 -4.453 C 5.25 -4.547 5.594 -5.062 5.594 -5.609 C 5.594 -5.969 5.359 -6.297 5 -6.297 C 4.625 -6.297 4.438 -6 4.438 -5.703 C 4.438 -5.422 4.625 -5.125 5 -5.125 C 5.062 -5.125 5.125 -5.141 5.172 -5.156 C 5.047 -4.906 4.812 -4.734 4.547 -4.672 C 4.094 -5.078 3.516 -5.312 2.906 -5.312 Z M 2.906 -5.078 C 3.422 -5.078 3.891 -4.812 4.172 -4.406 C 4.516 -3.906 4.547 -3.266 4.547 -2.672 C 4.547 -2.031 4.531 -1.375 4.172 -0.844 C 3.906 -0.406 3.422 -0.141 2.906 -0.141 C 2.391 -0.141 1.922 -0.406 1.641 -0.844 C 1.281 -1.375 1.266 -2.031 1.266 -2.672 C 1.266 -3.266 1.297 -3.906 1.641 -4.406 C 1.922 -4.812 2.391 -5.078 2.906 -5.078 Z M 1.391 -7.328 L 3.594 -5.922 L 3.75 -6.125 L 1.766 -7.828 C 1.688 -7.891 1.625 -7.922 1.547 -7.922 C 1.391 -7.922 1.234 -7.75 1.234 -7.578 C 1.234 -7.5 1.281 -7.406 1.391 -7.328 Z M 1.391 -7.328 " /></symbol><symbol overflow="visible" id="f1_glyph0-4"><path style="stroke:none;" d="M 2.078 -7.344 C 2.078 -7.656 1.828 -7.922 1.484 -7.922 C 1.188 -7.922 0.922 -7.672 0.922 -7.359 C 0.922 -7 1.203 -6.766 1.484 -6.766 C 1.859 -6.766 2.078 -7.078 2.078 -7.344 Z M 0.422 -5.125 L 0.422 -4.781 C 1.188 -4.781 1.297 -4.703 1.297 -4.125 L 1.297 -0.875 C 1.297 -0.344 1.172 -0.344 0.391 -0.344 L 0.391 0 C 0.734 -0.031 1.297 -0.031 1.641 -0.031 C 1.781 -0.031 2.469 -0.031 2.875 0 L 2.875 -0.344 C 2.094 -0.344 2.047 -0.406 2.047 -0.875 L 2.047 -5.25 Z M 0.422 -5.125 " /></symbol><symbol overflow="visible" id="f1_glyph0-5"><path style="stroke:none;" d="M 1.422 -2.156 C 1.984 -1.781 2.453 -1.781 2.594 -1.781 C 3.656 -1.781 4.453 -2.594 4.453 -3.516 C 4.453 -3.844 4.359 -4.297 3.984 -4.672 C 4.453 -5.156 5 -5.156 5.062 -5.156 C 5.109 -5.156 5.172 -5.156 5.219 -5.125 C 5.109 -5.078 5.047 -4.953 5.047 -4.828 C 5.047 -4.656 5.156 -4.516 5.359 -4.516 C 5.453 -4.516 5.656 -4.578 5.656 -4.844 C 5.656 -5.062 5.5 -5.391 5.078 -5.391 C 4.453 -5.391 4 -5 3.828 -4.828 C 3.469 -5.109 3.047 -5.25 2.594 -5.25 C 1.531 -5.25 0.734 -4.453 0.734 -3.531 C 0.734 -2.844 1.141 -2.406 1.266 -2.297 C 1.125 -2.125 0.906 -1.781 0.906 -1.312 C 0.906 -0.625 1.328 -0.328 1.422 -0.266 C 0.875 -0.109 0.328 0.328 0.328 0.938 C 0.328 1.766 1.438 2.438 2.906 2.438 C 4.328 2.438 5.516 1.812 5.516 0.922 C 5.516 0.625 5.422 -0.078 4.703 -0.453 C 4.094 -0.766 3.5 -0.766 2.484 -0.766 C 1.75 -0.766 1.672 -0.766 1.453 -0.984 C 1.328 -1.109 1.234 -1.328 1.234 -1.578 C 1.234 -1.781 1.297 -1.984 1.422 -2.156 Z M 2.594 -2.031 C 1.547 -2.031 1.547 -3.25 1.547 -3.516 C 1.547 -3.734 1.547 -4.219 1.75 -4.547 C 1.984 -4.891 2.344 -5 2.594 -5 C 3.641 -5 3.641 -3.797 3.641 -3.531 C 3.641 -3.312 3.641 -2.828 3.438 -2.5 C 3.203 -2.156 2.844 -2.031 2.594 -2.031 Z M 2.922 2.188 C 1.781 2.188 0.906 1.609 0.906 0.938 C 0.906 0.828 0.938 0.375 1.391 0.062 C 1.641 -0.109 1.75 -0.109 2.594 -0.109 C 3.578 -0.109 4.922 -0.109 4.922 0.938 C 4.922 1.641 4.016 2.188 2.922 2.188 Z M 2.922 2.188 " /></symbol><symbol overflow="visible" id="f1_glyph0-6"><path style="stroke:none;" d="M 4.609 -3.188 C 4.609 -3.828 4.609 -4.297 4.078 -4.766 C 3.656 -5.156 3.125 -5.312 2.594 -5.312 C 1.625 -5.312 0.875 -4.672 0.875 -3.906 C 0.875 -3.547 1.094 -3.391 1.375 -3.391 C 1.656 -3.391 1.859 -3.594 1.859 -3.875 C 1.859 -4.359 1.438 -4.359 1.25 -4.359 C 1.531 -4.859 2.094 -5.078 2.578 -5.078 C 3.125 -5.078 3.828 -4.625 3.828 -3.547 L 3.828 -3.078 C 1.438 -3.047 0.531 -2.031 0.531 -1.125 C 0.531 -0.172 1.625 0.125 2.344 0.125 C 3.141 0.125 3.672 -0.359 3.906 -0.938 C 3.953 -0.375 4.312 0.062 4.828 0.062 C 5.078 0.062 5.766 -0.109 5.766 -1.062 L 5.766 -1.734 L 5.516 -1.734 L 5.516 -1.062 C 5.516 -0.375 5.219 -0.281 5.062 -0.281 C 4.609 -0.281 4.609 -0.922 4.609 -1.094 Z M 3.828 -1.688 C 3.828 -0.516 2.953 -0.125 2.438 -0.125 C 1.859 -0.125 1.375 -0.547 1.375 -1.125 C 1.375 -2.688 3.391 -2.844 3.828 -2.859 Z M 3.828 -1.688 " /></symbol><symbol overflow="visible" id="f1_glyph0-7"><path style="stroke:none;" d="M 5.312 -2.891 C 5.312 -4 5.312 -4.344 5.031 -4.719 C 4.688 -5.188 4.125 -5.25 3.719 -5.25 C 2.562 -5.25 2.109 -4.266 2.016 -4.031 L 2 -4.031 L 2 -5.25 L 0.375 -5.125 L 0.375 -4.781 C 1.188 -4.781 1.281 -4.703 1.281 -4.109 L 1.281 -0.875 C 1.281 -0.344 1.156 -0.344 0.375 -0.344 L 0.375 0 C 0.688 -0.031 1.328 -0.031 1.672 -0.031 C 2.016 -0.031 2.656 -0.031 2.969 0 L 2.969 -0.344 C 2.203 -0.344 2.062 -0.344 2.062 -0.875 L 2.062 -3.094 C 2.062 -4.344 2.891 -5.016 3.625 -5.016 C 4.359 -5.016 4.531 -4.406 4.531 -3.688 L 4.531 -0.875 C 4.531 -0.344 4.406 -0.344 3.625 -0.344 L 3.625 0 C 3.938 -0.031 4.578 -0.031 4.906 -0.031 C 5.25 -0.031 5.906 -0.031 6.219 0 L 6.219 -0.344 C 5.609 -0.344 5.312 -0.344 5.312 -0.703 Z M 5.312 -2.891 " /></symbol><symbol overflow="visible" id="f1_glyph0-8"><path style="stroke:none;" d="M 4.312 -4.406 C 4.172 -4.406 3.734 -4.406 3.734 -3.922 C 3.734 -3.641 3.938 -3.438 4.219 -3.438 C 4.5 -3.438 4.719 -3.594 4.719 -3.953 C 4.719 -4.75 3.891 -5.312 2.922 -5.312 C 1.531 -5.312 0.422 -4.078 0.422 -2.578 C 0.422 -1.047 1.562 0.125 2.906 0.125 C 4.484 0.125 4.844 -1.312 4.844 -1.422 C 4.844 -1.531 4.75 -1.531 4.719 -1.531 C 4.609 -1.531 4.609 -1.484 4.562 -1.344 C 4.297 -0.5 3.656 -0.141 3.016 -0.141 C 2.281 -0.141 1.328 -0.781 1.328 -2.594 C 1.328 -4.562 2.344 -5.062 2.938 -5.062 C 3.391 -5.062 4.047 -4.875 4.312 -4.406 Z M 4.312 -4.406 " /></symbol><symbol overflow="visible" id="f1_glyph0-9"><path style="stroke:none;" d="M 3.625 -5.125 L 3.625 -4.781 C 4.438 -4.781 4.531 -4.703 4.531 -4.109 L 4.531 -1.984 C 4.531 -0.969 4 -0.125 3.094 -0.125 C 2.125 -0.125 2.062 -0.672 2.062 -1.312 L 2.062 -5.25 L 0.375 -5.125 L 0.375 -4.781 C 1.281 -4.781 1.281 -4.75 1.281 -3.688 L 1.281 -1.891 C 1.281 -1.156 1.281 -0.734 1.641 -0.328 C 1.938 -0.031 2.422 0.125 3.031 0.125 C 3.234 0.125 3.609 0.125 4.016 -0.219 C 4.359 -0.5 4.547 -0.953 4.547 -0.953 L 4.547 0.125 L 6.219 0 L 6.219 -0.344 C 5.406 -0.344 5.312 -0.422 5.312 -1.016 L 5.312 -5.25 Z M 3.625 -5.125 " /></symbol><symbol overflow="visible" id="f1_glyph0-10"><path style="stroke:none;" d="M 5.469 -2.547 C 5.469 -4.094 4.297 -5.312 2.922 -5.312 C 1.484 -5.312 0.359 -4.047 0.359 -2.547 C 0.359 -1.031 1.547 0.125 2.906 0.125 C 4.312 0.125 5.469 -1.047 5.469 -2.547 Z M 2.922 -0.141 C 2.484 -0.141 1.938 -0.328 1.594 -0.922 C 1.281 -1.453 1.266 -2.156 1.266 -2.656 C 1.266 -3.109 1.266 -3.844 1.641 -4.375 C 1.969 -4.891 2.484 -5.078 2.906 -5.078 C 3.375 -5.078 3.875 -4.859 4.203 -4.406 C 4.562 -3.844 4.562 -3.094 4.562 -2.656 C 4.562 -2.234 4.562 -1.5 4.25 -0.938 C 3.922 -0.375 3.375 -0.141 2.922 -0.141 Z M 1.141 -5.906 L 2.906 -6.766 L 4.672 -5.906 L 4.797 -6.125 L 2.906 -7.312 L 1.031 -6.125 Z M 2.906 1.766 C 3.188 1.766 3.391 1.531 3.391 1.266 C 3.391 0.984 3.188 0.781 2.906 0.781 C 2.641 0.781 2.406 0.984 2.406 1.266 C 2.406 1.531 2.641 1.766 2.906 1.766 Z M 2.906 1.766 " /></symbol><symbol overflow="visible" id="f1_glyph0-11"><path style="stroke:none;" d="M 5.469 -2.547 C 5.469 -4.094 4.297 -5.312 2.922 -5.312 C 1.484 -5.312 0.359 -4.047 0.359 -2.547 C 0.359 -1.031 1.547 0.125 2.906 0.125 C 4.312 0.125 5.469 -1.047 5.469 -2.547 Z M 2.922 -0.141 C 2.484 -0.141 1.938 -0.328 1.594 -0.922 C 1.281 -1.453 1.266 -2.156 1.266 -2.656 C 1.266 -3.109 1.266 -3.844 1.641 -4.375 C 1.969 -4.891 2.484 -5.078 2.906 -5.078 C 3.375 -5.078 3.875 -4.859 4.203 -4.406 C 4.562 -3.844 4.562 -3.094 4.562 -2.656 C 4.562 -2.234 4.562 -1.5 4.25 -0.938 C 3.922 -0.375 3.375 -0.141 2.922 -0.141 Z M 2.906 1.766 C 3.188 1.766 3.391 1.531 3.391 1.266 C 3.391 0.984 3.188 0.781 2.906 0.781 C 2.641 0.781 2.406 0.984 2.406 1.266 C 2.406 1.531 2.641 1.766 2.906 1.766 Z M 2.906 1.766 " /></symbol><symbol overflow="visible" id="f1_glyph0-12"><path style="stroke:none;" d="M 3.875 2.891 C 3.875 2.859 3.875 2.844 3.672 2.641 C 2.484 1.438 1.812 -0.531 1.812 -2.969 C 1.812 -5.281 2.375 -7.266 3.75 -8.672 C 3.875 -8.781 3.875 -8.812 3.875 -8.844 C 3.875 -8.922 3.812 -8.938 3.766 -8.938 C 3.609 -8.938 2.641 -8.078 2.047 -6.922 C 1.438 -5.703 1.172 -4.438 1.172 -2.969 C 1.172 -1.906 1.328 -0.484 1.953 0.781 C 2.656 2.219 3.641 3 3.766 3 C 3.812 3 3.875 2.969 3.875 2.891 Z M 3.875 2.891 " /></symbol><symbol overflow="visible" id="f1_glyph0-13"><path style="stroke:none;" d="M 3.359 -2.969 C 3.359 -3.875 3.25 -5.359 2.578 -6.734 C 1.875 -8.172 0.891 -8.938 0.766 -8.938 C 0.719 -8.938 0.656 -8.922 0.656 -8.844 C 0.656 -8.812 0.656 -8.781 0.859 -8.578 C 2.047 -7.375 2.719 -5.406 2.719 -2.984 C 2.719 -0.672 2.156 1.328 0.781 2.734 C 0.656 2.844 0.656 2.859 0.656 2.891 C 0.656 2.969 0.719 3 0.766 3 C 0.922 3 1.891 2.141 2.484 0.969 C 3.094 -0.25 3.359 -1.531 3.359 -2.969 Z M 3.359 -2.969 " /></symbol><symbol overflow="visible" id="f1_glyph0-14"><path style="stroke:none;" d="M 2.484 -4.969 C 1.875 -5.125 1.328 -5.719 1.328 -6.484 C 1.328 -7.312 2 -8.078 2.938 -8.078 C 4.891 -8.078 5.156 -6.141 5.219 -5.625 C 5.25 -5.484 5.25 -5.438 5.359 -5.438 C 5.5 -5.438 5.5 -5.5 5.5 -5.703 L 5.5 -8.125 C 5.5 -8.328 5.5 -8.391 5.375 -8.391 C 5.344 -8.391 5.297 -8.391 5.203 -8.234 L 4.812 -7.516 C 4.25 -8.25 3.453 -8.391 2.938 -8.391 C 1.609 -8.391 0.641 -7.328 0.641 -6.109 C 0.641 -5.547 0.844 -5.016 1.281 -4.547 C 1.703 -4.078 2.125 -3.969 2.969 -3.75 C 3.391 -3.656 4.047 -3.5 4.203 -3.422 C 4.766 -3.141 5.141 -2.5 5.141 -1.844 C 5.141 -0.938 4.5 -0.094 3.516 -0.094 C 2.984 -0.094 2.234 -0.219 1.656 -0.734 C 0.969 -1.359 0.922 -2.219 0.906 -2.609 C 0.891 -2.703 0.797 -2.703 0.781 -2.703 C 0.641 -2.703 0.641 -2.641 0.641 -2.438 L 0.641 -0.031 C 0.641 0.188 0.641 0.25 0.766 0.25 C 0.828 0.25 0.844 0.219 0.938 0.078 C 0.984 -0.016 1.234 -0.453 1.328 -0.625 C 1.75 -0.156 2.5 0.25 3.531 0.25 C 4.859 0.25 5.828 -0.875 5.828 -2.188 C 5.828 -2.922 5.562 -3.453 5.234 -3.844 C 4.797 -4.391 4.25 -4.516 3.797 -4.641 Z M 2.484 -4.969 " /></symbol><symbol overflow="visible" id="f1_glyph0-15"><path style="stroke:none;" d="M 5.469 -2.547 C 5.469 -4.094 4.297 -5.312 2.922 -5.312 C 1.484 -5.312 0.359 -4.047 0.359 -2.547 C 0.359 -1.031 1.547 0.125 2.906 0.125 C 4.312 0.125 5.469 -1.047 5.469 -2.547 Z M 2.922 -0.141 C 2.484 -0.141 1.938 -0.328 1.594 -0.922 C 1.281 -1.453 1.266 -2.156 1.266 -2.656 C 1.266 -3.109 1.266 -3.844 1.641 -4.375 C 1.969 -4.891 2.484 -5.078 2.906 -5.078 C 3.375 -5.078 3.875 -4.859 4.203 -4.406 C 4.562 -3.844 4.562 -3.094 4.562 -2.656 C 4.562 -2.234 4.562 -1.5 4.25 -0.938 C 3.922 -0.375 3.375 -0.141 2.922 -0.141 Z M 1.141 -5.906 L 2.906 -6.766 L 4.672 -5.906 L 4.797 -6.125 L 2.906 -7.312 L 1.031 -6.125 Z M 4.094 -9.172 C 4.094 -9.328 3.953 -9.5 3.797 -9.5 C 3.734 -9.5 3.656 -9.484 3.594 -9.422 L 1.594 -7.719 L 1.75 -7.516 L 3.953 -8.922 C 4.062 -8.984 4.094 -9.078 4.094 -9.172 Z M 4.094 -9.172 " /></symbol><symbol overflow="visible" id="f1_glyph1-0"><path style="stroke:none;" d="" /></symbol><symbol overflow="visible" id="f1_glyph1-1"><path style="stroke:none;" d="M 5.656 -4.547 C 5.703 -4.688 5.703 -4.719 5.703 -4.75 C 5.703 -4.875 5.609 -5.031 5.391 -5.031 C 5.109 -5.031 4.953 -4.781 4.938 -4.578 L 4.922 -4.578 C 4.797 -4.859 4.5 -5.25 3.953 -5.25 C 2.688 -5.25 1.312 -3.531 1.312 -1.781 C 1.312 -0.688 1.906 0 2.688 0 C 3.328 0 3.859 -0.547 3.953 -0.625 L 3.562 0.922 C 3.438 1.281 2.984 2.188 2.016 2.188 C 1.891 2.188 1.484 2.188 1.172 2.062 C 1.438 1.953 1.531 1.719 1.531 1.547 C 1.531 1.391 1.438 1.203 1.156 1.203 C 0.922 1.203 0.625 1.406 0.625 1.781 C 0.625 2.234 1.078 2.438 2 2.438 C 3.219 2.438 4.109 1.656 4.344 0.719 Z M 4.188 -1.547 C 4.094 -1.156 3.359 -0.234 2.719 -0.234 C 2.078 -0.234 2.047 -1.156 2.047 -1.297 C 2.047 -1.875 2.406 -3.219 2.594 -3.672 C 2.891 -4.406 3.438 -5.016 3.953 -5.016 C 4.672 -5.016 4.766 -4 4.766 -3.922 C 4.766 -3.906 4.75 -3.844 4.734 -3.734 Z M 4.188 -1.547 " /></symbol><symbol overflow="visible" id="f1_glyph1-2"><path style="stroke:none;" d="M 3.797 -7.422 C 3.797 -7.656 3.641 -7.781 3.438 -7.781 C 3.219 -7.781 2.906 -7.594 2.906 -7.266 C 2.906 -7 3.094 -6.906 3.281 -6.906 C 3.516 -6.906 3.797 -7.125 3.797 -7.422 Z M 1.609 -1.344 C 1.516 -1.078 1.516 -0.938 1.516 -0.828 C 1.516 -0.125 1.984 0.125 2.375 0.125 C 3.469 0.125 3.844 -1.656 3.844 -1.703 C 3.844 -1.812 3.75 -1.812 3.703 -1.812 C 3.547 -1.812 3.547 -1.781 3.5 -1.594 C 3.391 -1.188 3.078 -0.125 2.391 -0.125 C 2.266 -0.125 2.125 -0.172 2.125 -0.469 C 2.125 -0.781 2.281 -1.203 2.5 -1.781 C 2.734 -2.438 2.984 -3.078 3.203 -3.719 C 3.312 -4.016 3.344 -4.109 3.344 -4.328 C 3.344 -4.938 2.938 -5.25 2.484 -5.25 C 1.391 -5.25 0.984 -3.5 0.984 -3.438 C 0.984 -3.328 1.094 -3.328 1.156 -3.328 C 1.297 -3.328 1.312 -3.359 1.359 -3.531 C 1.453 -3.906 1.766 -5.016 2.453 -5.016 C 2.719 -5.016 2.719 -4.797 2.719 -4.656 C 2.719 -4.344 2.641 -4.156 2.562 -3.938 Z M 1.609 -1.344 " /></symbol><symbol overflow="visible" id="f1_glyph1-3"><path style="stroke:none;" d="M 5.656 -4.547 C 5.703 -4.688 5.703 -4.719 5.703 -4.75 C 5.703 -4.875 5.609 -5.031 5.391 -5.031 C 5 -5.031 4.922 -4.562 4.922 -4.562 L 4.906 -4.547 C 4.688 -5.109 4.281 -5.25 3.953 -5.25 C 2.656 -5.25 1.281 -3.438 1.281 -1.688 C 1.281 -0.625 1.844 0.125 2.656 0.125 C 3.141 0.125 3.641 -0.188 4.094 -0.734 C 4.219 0 4.75 0.125 5.031 0.125 C 5.5 0.125 5.734 -0.219 5.891 -0.578 C 6.094 -0.984 6.234 -1.672 6.234 -1.703 C 6.234 -1.812 6.125 -1.812 6.078 -1.812 C 5.938 -1.812 5.922 -1.797 5.859 -1.531 C 5.609 -0.531 5.391 -0.125 5.062 -0.125 C 4.797 -0.125 4.734 -0.375 4.734 -0.594 C 4.734 -0.781 4.781 -1.047 4.828 -1.234 Z M 4.156 -1.438 C 4.094 -1.125 3.375 -0.125 2.688 -0.125 C 2.047 -0.125 2.031 -1.047 2.031 -1.188 C 2.031 -1.781 2.406 -3.188 2.594 -3.672 C 2.906 -4.406 3.453 -5.016 3.953 -5.016 C 4.672 -5.016 4.75 -3.953 4.75 -3.875 C 4.75 -3.859 4.719 -3.734 4.719 -3.703 Z M 2.641 -5.906 C 2.672 -5.906 2.688 -5.906 2.703 -5.906 L 4.453 -6.906 L 5.906 -5.812 C 5.906 -5.797 5.938 -5.781 5.969 -5.781 C 6 -5.781 6.016 -5.797 6.047 -5.812 L 6.062 -5.828 C 6.062 -5.859 6.062 -5.875 6.062 -5.906 C 6.062 -5.922 6.062 -5.953 6.047 -5.969 L 4.609 -7.422 C 4.594 -7.438 4.547 -7.438 4.531 -7.438 C 4.5 -7.438 4.484 -7.438 4.469 -7.422 L 2.578 -6.109 C 2.547 -6.094 2.531 -6.062 2.531 -6.016 C 2.531 -6.016 2.547 -5.984 2.547 -5.969 L 2.547 -5.953 C 2.578 -5.906 2.609 -5.906 2.641 -5.906 Z M 2.641 -5.906 " /></symbol><symbol overflow="visible" id="f1_glyph1-4"><path style="stroke:none;" d="M 5.969 -4.609 C 6.016 -4.781 6.016 -4.797 6.016 -4.859 C 6.016 -5.031 5.875 -5.141 5.719 -5.141 C 5.391 -5.141 5.312 -4.844 5.25 -4.672 L 4.391 -1.156 C 4.297 -0.781 3.812 -0.125 3.141 -0.125 C 2.609 -0.125 2.5 -0.656 2.5 -1.047 C 2.5 -1.766 2.922 -2.891 3.188 -3.656 C 3.297 -3.938 3.344 -4.094 3.344 -4.328 C 3.344 -4.797 3.062 -5.25 2.484 -5.25 C 1.391 -5.25 0.984 -3.5 0.984 -3.438 C 0.984 -3.328 1.094 -3.328 1.156 -3.328 C 1.297 -3.328 1.312 -3.359 1.359 -3.531 C 1.453 -3.891 1.766 -5.016 2.453 -5.016 C 2.594 -5.016 2.734 -4.953 2.734 -4.672 C 2.734 -4.375 2.609 -4.062 2.359 -3.375 C 1.984 -2.312 1.828 -1.703 1.828 -1.234 C 1.828 -0.172 2.531 0.125 3.109 0.125 C 3.625 0.125 3.984 -0.141 4.172 -0.328 C 4.047 0.188 3.906 0.797 3.5 1.406 C 3.109 1.938 2.688 2.188 2.266 2.188 C 1.938 2.188 1.609 2.031 1.531 1.594 C 2.094 1.578 2.109 1.078 2.109 1.062 C 2.109 0.875 1.984 0.719 1.734 0.719 C 1.656 0.719 1.188 0.734 1.188 1.438 C 1.188 2.031 1.641 2.438 2.25 2.438 C 3.5 2.438 4.531 1.172 4.812 0.031 Z M 5.969 -4.609 " /></symbol><symbol overflow="visible" id="f1_glyph2-0"><path style="stroke:none;" d="" /></symbol><symbol overflow="visible" id="f1_glyph2-1"><path style="stroke:none;" d="M 2.984 2.984 L 2.984 2.547 L 1.828 2.547 L 1.828 -8.5 L 2.984 -8.5 L 2.984 -8.938 L 1.391 -8.938 L 1.391 2.984 Z M 2.984 2.984 " /></symbol><symbol overflow="visible" id="f1_glyph2-2"><path style="stroke:none;" d="M 5.344 -3.812 C 5.344 -4.797 5.281 -5.766 4.859 -6.672 C 4.359 -7.672 3.5 -7.922 2.922 -7.922 C 2.234 -7.922 1.391 -7.578 0.938 -6.594 C 0.609 -5.844 0.484 -5.109 0.484 -3.812 C 0.484 -2.656 0.578 -1.781 1 -0.938 C 1.469 -0.031 2.281 0.25 2.906 0.25 C 3.953 0.25 4.547 -0.375 4.891 -1.062 C 5.312 -1.953 5.344 -3.125 5.344 -3.812 Z M 2.906 0.016 C 2.531 0.016 1.75 -0.203 1.531 -1.5 C 1.391 -2.219 1.391 -3.125 1.391 -3.953 C 1.391 -4.938 1.391 -5.812 1.578 -6.516 C 1.781 -7.312 2.391 -7.688 2.906 -7.688 C 3.359 -7.688 4.047 -7.422 4.281 -6.391 C 4.438 -5.703 4.438 -4.766 4.438 -3.953 C 4.438 -3.156 4.438 -2.25 4.297 -1.531 C 4.078 -0.219 3.328 0.016 2.906 0.016 Z M 2.906 0.016 " /></symbol><symbol overflow="visible" id="f1_glyph2-3"><path style="stroke:none;" d="M 2.188 -4.562 C 2.188 -4.891 1.922 -5.141 1.625 -5.141 C 1.281 -5.141 1.031 -4.859 1.031 -4.562 C 1.031 -4.203 1.328 -3.984 1.609 -3.984 C 1.938 -3.984 2.188 -4.234 2.188 -4.562 Z M 1.984 -0.125 C 1.984 0.297 1.984 1.141 1.266 2.031 C 1.188 2.141 1.188 2.156 1.188 2.188 C 1.188 2.234 1.25 2.297 1.312 2.297 C 1.391 2.297 2.234 1.422 2.234 0.031 C 2.234 -0.422 2.188 -1.156 1.609 -1.156 C 1.266 -1.156 1.031 -0.891 1.031 -0.578 C 1.031 -0.266 1.266 0 1.625 0 C 1.844 0 1.938 -0.078 1.984 -0.125 Z M 1.984 -0.125 " /></symbol><symbol overflow="visible" id="f1_glyph2-4"><path style="stroke:none;" d="M 1.469 -4.156 C 1.469 -7.172 2.938 -7.641 3.578 -7.641 C 4 -7.641 4.438 -7.516 4.656 -7.156 C 4.516 -7.156 4.062 -7.156 4.062 -6.672 C 4.062 -6.406 4.25 -6.172 4.547 -6.172 C 4.859 -6.172 5.062 -6.359 5.062 -6.703 C 5.062 -7.312 4.609 -7.922 3.562 -7.922 C 2.062 -7.922 0.484 -6.391 0.484 -3.766 C 0.484 -0.484 1.922 0.25 2.938 0.25 C 4.234 0.25 5.344 -0.875 5.344 -2.438 C 5.344 -4.016 4.234 -5.078 3.047 -5.078 C 1.984 -5.078 1.578 -4.156 1.469 -3.828 Z M 2.938 -0.078 C 2.188 -0.078 1.828 -0.734 1.719 -0.984 C 1.609 -1.297 1.484 -1.891 1.484 -2.719 C 1.484 -3.656 1.922 -4.844 3 -4.844 C 3.641 -4.844 4 -4.406 4.172 -4 C 4.359 -3.547 4.359 -2.953 4.359 -2.438 C 4.359 -1.844 4.359 -1.297 4.141 -0.844 C 3.844 -0.281 3.406 -0.078 2.938 -0.078 Z M 2.938 -0.078 " /></symbol><symbol overflow="visible" id="f1_glyph2-5"><path style="stroke:none;" d="M 3.359 -2.969 C 3.359 -3.875 3.25 -5.359 2.578 -6.734 C 1.875 -8.172 0.891 -8.938 0.766 -8.938 C 0.719 -8.938 0.656 -8.922 0.656 -8.844 C 0.656 -8.812 0.656 -8.781 0.859 -8.578 C 2.047 -7.375 2.719 -5.406 2.719 -2.984 C 2.719 -0.672 2.156 1.328 0.781 2.734 C 0.656 2.844 0.656 2.859 0.656 2.891 C 0.656 2.969 0.719 3 0.766 3 C 0.922 3 1.891 2.141 2.484 0.969 C 3.094 -0.25 3.359 -1.531 3.359 -2.969 Z M 3.359 -2.969 " /></symbol><symbol overflow="visible" id="f1_glyph2-6"><path style="stroke:none;" d="M 3.438 -7.641 C 3.438 -7.922 3.438 -7.922 3.188 -7.922 C 2.906 -7.609 2.312 -7.172 1.078 -7.172 L 1.078 -6.812 C 1.359 -6.812 1.953 -6.812 2.609 -7.125 L 2.609 -0.922 C 2.609 -0.484 2.578 -0.344 1.531 -0.344 L 1.156 -0.344 L 1.156 0 C 1.484 -0.031 2.641 -0.031 3.031 -0.031 C 3.422 -0.031 4.562 -0.031 4.891 0 L 4.891 -0.344 L 4.516 -0.344 C 3.469 -0.344 3.438 -0.484 3.438 -0.922 Z M 3.438 -7.641 " /></symbol><symbol overflow="visible" id="f1_glyph2-7"><path style="stroke:none;" d="M 5.25 -2 L 4.984 -2 C 4.953 -1.797 4.859 -1.141 4.734 -0.953 C 4.656 -0.844 3.969 -0.844 3.609 -0.844 L 1.406 -0.844 C 1.734 -1.125 2.453 -1.891 2.766 -2.172 C 4.578 -3.844 5.25 -4.453 5.25 -5.641 C 5.25 -7.016 4.156 -7.922 2.781 -7.922 C 1.391 -7.922 0.578 -6.75 0.578 -5.719 C 0.578 -5.109 1.109 -5.109 1.141 -5.109 C 1.391 -5.109 1.703 -5.297 1.703 -5.672 C 1.703 -6.016 1.484 -6.234 1.141 -6.234 C 1.031 -6.234 1.016 -6.234 0.984 -6.219 C 1.203 -7.031 1.844 -7.578 2.625 -7.578 C 3.641 -7.578 4.25 -6.734 4.25 -5.641 C 4.25 -4.625 3.672 -3.75 3 -2.984 L 0.578 -0.281 L 0.578 0 L 4.938 0 Z M 5.25 -2 " /></symbol><symbol overflow="visible" id="f1_glyph2-8"><path style="stroke:none;" d="M 3.547 -4.297 C 4.156 -4.625 5.016 -5.172 5.016 -6.172 C 5.016 -7.219 4.016 -7.922 2.922 -7.922 C 1.734 -7.922 0.812 -7.062 0.812 -5.969 C 0.812 -5.562 0.938 -5.156 1.266 -4.75 C 1.391 -4.609 1.406 -4.594 2.234 -4 C 1.078 -3.469 0.484 -2.672 0.484 -1.797 C 0.484 -0.531 1.688 0.25 2.906 0.25 C 4.234 0.25 5.344 -0.734 5.344 -1.984 C 5.344 -3.188 4.484 -3.734 3.547 -4.297 Z M 1.938 -5.375 C 1.781 -5.484 1.297 -5.797 1.297 -6.375 C 1.297 -7.156 2.109 -7.641 2.906 -7.641 C 3.766 -7.641 4.531 -7.016 4.531 -6.156 C 4.531 -5.438 4 -4.859 3.312 -4.469 Z M 2.484 -3.844 L 3.938 -2.891 C 4.25 -2.688 4.797 -2.328 4.797 -1.594 C 4.797 -0.688 3.875 -0.078 2.922 -0.078 C 1.906 -0.078 1.031 -0.812 1.031 -1.797 C 1.031 -2.734 1.719 -3.484 2.484 -3.844 Z M 2.484 -3.844 " /></symbol><symbol overflow="visible" id="f1_glyph2-9"><path style="stroke:none;" d="M 4.297 -7.766 C 4.297 -7.984 4.297 -8.047 4.141 -8.047 C 4.047 -8.047 4 -8.047 3.906 -7.906 L 0.328 -2.344 L 0.328 -1.984 L 3.453 -1.984 L 3.453 -0.906 C 3.453 -0.469 3.438 -0.344 2.562 -0.344 L 2.328 -0.344 L 2.328 0 C 2.594 -0.031 3.547 -0.031 3.875 -0.031 C 4.203 -0.031 5.156 -0.031 5.438 0 L 5.438 -0.344 L 5.203 -0.344 C 4.344 -0.344 4.297 -0.469 4.297 -0.906 L 4.297 -1.984 L 5.516 -1.984 L 5.516 -2.344 L 4.297 -2.344 Z M 3.516 -6.828 L 3.516 -2.344 L 0.625 -2.344 Z M 3.516 -6.828 " /></symbol><symbol overflow="visible" id="f1_glyph2-10"><path style="stroke:none;" d="M 2.188 -4.281 C 1.984 -4.266 1.938 -4.25 1.938 -4.156 C 1.938 -4.031 2 -4.031 2.219 -4.031 L 2.766 -4.031 C 3.781 -4.031 4.234 -3.188 4.234 -2.047 C 4.234 -0.484 3.422 -0.078 2.844 -0.078 C 2.266 -0.078 1.281 -0.344 0.938 -1.125 C 1.328 -1.078 1.672 -1.281 1.672 -1.719 C 1.672 -2.062 1.422 -2.297 1.078 -2.297 C 0.797 -2.297 0.484 -2.141 0.484 -1.688 C 0.484 -0.625 1.547 0.25 2.875 0.25 C 4.297 0.25 5.344 -0.828 5.344 -2.031 C 5.344 -3.141 4.453 -4 3.312 -4.203 C 4.344 -4.5 5.016 -5.359 5.016 -6.297 C 5.016 -7.234 4.047 -7.922 2.891 -7.922 C 1.688 -7.922 0.812 -7.203 0.812 -6.328 C 0.812 -5.859 1.188 -5.766 1.359 -5.766 C 1.609 -5.766 1.891 -5.938 1.891 -6.297 C 1.891 -6.672 1.609 -6.844 1.344 -6.844 C 1.281 -6.844 1.25 -6.844 1.219 -6.828 C 1.672 -7.641 2.797 -7.641 2.844 -7.641 C 3.25 -7.641 4.016 -7.469 4.016 -6.297 C 4.016 -6.062 3.984 -5.406 3.641 -4.891 C 3.281 -4.359 2.875 -4.328 2.547 -4.312 Z M 2.188 -4.281 " /></symbol><symbol overflow="visible" id="f1_glyph2-11"><path style="stroke:none;" d="M 5.656 -7.406 L 5.656 -7.672 L 2.797 -7.672 C 1.344 -7.672 1.328 -7.828 1.281 -8.062 L 1.016 -8.062 L 0.641 -5.672 L 0.906 -5.672 C 0.938 -5.891 1.047 -6.625 1.203 -6.766 C 1.297 -6.828 2.188 -6.828 2.359 -6.828 L 4.891 -6.828 L 3.625 -5.016 C 3.297 -4.547 2.094 -2.594 2.094 -0.359 C 2.094 -0.219 2.094 0.25 2.594 0.25 C 3.094 0.25 3.094 -0.219 3.094 -0.375 L 3.094 -0.969 C 3.094 -2.734 3.375 -4.125 3.938 -4.922 Z M 5.656 -7.406 " /></symbol><symbol overflow="visible" id="f1_glyph2-12"><path style="stroke:none;" d="M 1.531 -6.828 C 2.031 -6.672 2.453 -6.656 2.594 -6.656 C 3.938 -6.656 4.797 -7.641 4.797 -7.812 C 4.797 -7.859 4.766 -7.922 4.703 -7.922 C 4.672 -7.922 4.656 -7.922 4.547 -7.875 C 3.875 -7.578 3.297 -7.547 3 -7.547 C 2.203 -7.547 1.641 -7.781 1.422 -7.875 C 1.328 -7.922 1.312 -7.922 1.297 -7.922 C 1.203 -7.922 1.203 -7.844 1.203 -7.656 L 1.203 -4.109 C 1.203 -3.906 1.203 -3.828 1.344 -3.828 C 1.406 -3.828 1.422 -3.844 1.531 -3.984 C 1.875 -4.469 2.438 -4.75 3.031 -4.75 C 3.656 -4.75 3.969 -4.172 4.062 -3.969 C 4.266 -3.5 4.281 -2.922 4.281 -2.469 C 4.281 -2.016 4.281 -1.328 3.953 -0.797 C 3.688 -0.375 3.219 -0.078 2.688 -0.078 C 1.906 -0.078 1.125 -0.609 0.922 -1.484 C 0.984 -1.453 1.047 -1.438 1.109 -1.438 C 1.312 -1.438 1.641 -1.562 1.641 -1.969 C 1.641 -2.297 1.406 -2.484 1.109 -2.484 C 0.891 -2.484 0.578 -2.391 0.578 -1.922 C 0.578 -0.906 1.391 0.25 2.719 0.25 C 4.062 0.25 5.25 -0.875 5.25 -2.391 C 5.25 -3.812 4.297 -5 3.047 -5 C 2.359 -5 1.844 -4.703 1.531 -4.359 Z M 1.531 -6.828 " /></symbol></g><clipPath id="f1_clip1"><path d="M 4 3 L 395.594 3 L 395.594 5 L 4 5 Z M 4 3 " /></clipPath><clipPath id="f1_clip2"><path d="M 390 13 L 395.594 13 L 395.594 26 L 390 26 Z M 390 13 " /></clipPath><clipPath id="f1_clip3"><path d="M 4 34 L 395.594 34 L 395.594 35 L 4 35 Z M 4 34 " /></clipPath><clipPath id="f1_clip4"><path d="M 4 49 L 395.594 49 L 395.594 50 L 4 50 Z M 4 49 " /></clipPath></defs><g id="f1_surface1"><g clip-path="url(#f1_clip1)"><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.417 -4.186 L 445.42 -4.186" transform="matrix(0.996593,0,0,-0.996593,0,0)" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.617 -34.152 L 4.617 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-1" x="30.257" y="14.883" /><use xlink:href="#f1_glyph0-2" x="38.68" y="14.883" /><use xlink:href="#f1_glyph0-3" x="45.16" y="14.883" /><use xlink:href="#f1_glyph0-4" x="50.992" y="14.883" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-5" x="58.115" y="14.883" /><use xlink:href="#f1_glyph0-4" x="63.947" y="14.883" /><use xlink:href="#f1_glyph0-6" x="67.187" y="14.883" /><use xlink:href="#f1_glyph0-7" x="73.019" y="14.883" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-8" x="16.716" y="29.715" /><use xlink:href="#f1_glyph0-9" x="21.9" y="29.715" /><use xlink:href="#f1_glyph0-10" x="28.379" y="29.715" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-8" x="34.533" y="29.715" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-5" x="43.601" y="29.715" /><use xlink:href="#f1_glyph0-11" x="49.433" y="29.715" /><use xlink:href="#f1_glyph0-4" x="55.265" y="29.715" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-12" x="62.401" y="29.715" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph1-1" x="66.934" y="29.715" /><use xlink:href="#f1_glyph1-2" x="72.294" y="29.715" /><use xlink:href="#f1_glyph1-3" x="75.867" y="29.715" /><use xlink:href="#f1_glyph1-4" x="81.823" y="29.715" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-13" x="88.508" y="29.715" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 105.516 -34.152 L 105.516 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="111.312" y="22.18" /><use xlink:href="#f1_glyph2-2" x="114.553" y="22.18" /><use xlink:href="#f1_glyph2-3" x="120.386" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-4" x="125.616" y="22.18" /><use xlink:href="#f1_glyph2-2" x="131.45" y="22.18" /><use xlink:href="#f1_glyph2-5" x="137.283" y="22.18" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 148.475 -34.152 L 148.475 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="154.126" y="22.18" /><use xlink:href="#f1_glyph2-4" x="157.367" y="22.18" /><use xlink:href="#f1_glyph2-2" x="163.2" y="22.18" /><use xlink:href="#f1_glyph2-3" x="169.034" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-6" x="174.264" y="22.18" /><use xlink:href="#f1_glyph2-7" x="180.098" y="22.18" /><use xlink:href="#f1_glyph2-2" x="185.931" y="22.18" /><use xlink:href="#f1_glyph2-5" x="191.764" y="22.18" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 203.141 -34.152 L 203.141 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="208.607" y="22.18" /><use xlink:href="#f1_glyph2-6" x="211.848" y="22.18" /><use xlink:href="#f1_glyph2-7" x="217.681" y="22.18" /><use xlink:href="#f1_glyph2-2" x="223.514" y="22.18" /><use xlink:href="#f1_glyph2-3" x="229.348" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-6" x="234.578" y="22.18" /><use xlink:href="#f1_glyph2-8" x="240.412" y="22.18" /><use xlink:href="#f1_glyph2-2" x="246.245" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-5" x="252.066" y="22.18" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 263.664 -34.152 L 263.664 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="268.921" y="22.18" /><use xlink:href="#f1_glyph2-6" x="272.162" y="22.18" /><use xlink:href="#f1_glyph2-8" x="277.995" y="22.18" /><use xlink:href="#f1_glyph2-2" x="283.828" y="22.18" /><use xlink:href="#f1_glyph2-3" x="289.662" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-7" x="294.892" y="22.18" /><use xlink:href="#f1_glyph2-9" x="300.725" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-2" x="306.547" y="22.18" /><use xlink:href="#f1_glyph2-5" x="312.38" y="22.18" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 324.183 -34.152 L 324.183 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="329.234" y="22.18" /><use xlink:href="#f1_glyph2-7" x="332.474" y="22.18" /><use xlink:href="#f1_glyph2-9" x="338.308" y="22.18" /><use xlink:href="#f1_glyph2-2" x="344.141" y="22.18" /><use xlink:href="#f1_glyph2-3" x="349.974" y="22.18" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-10" x="355.205" y="22.18" /><use xlink:href="#f1_glyph2-2" x="361.038" y="22.18" /><use xlink:href="#f1_glyph2-2" x="366.871" y="22.18" /><use xlink:href="#f1_glyph2-5" x="372.705" y="22.18" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 384.701 -34.152 L 384.701 -4.382" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g clip-path="url(#f1_clip2)"><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-1" x="389.547" y="22.18" /><use xlink:href="#f1_glyph2-10" x="392.788" y="22.18" /><use xlink:href="#f1_glyph2-2" x="398.622" y="22.18" /><use xlink:href="#f1_glyph2-2" x="404.455" y="22.18" /><use xlink:href="#f1_glyph2-3" x="410.288" y="22.18" /></g></g><g clip-path="url(#f1_clip3)"><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.417 -34.351 L 445.42 -34.351" transform="matrix(0.996593,0,0,-0.996593,0,0)" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.617 -49.43 L 4.617 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-14" x="25.883" y="44.945" /><use xlink:href="#f1_glyph0-15" x="32.362" y="44.945" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-8" x="42.078" y="44.945" /><use xlink:href="#f1_glyph0-9" x="47.262" y="44.945" /><use xlink:href="#f1_glyph0-10" x="53.741" y="44.945" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-8" x="59.907" y="44.945" /></g><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph0-5" x="68.975" y="44.945" /><use xlink:href="#f1_glyph0-11" x="74.807" y="44.945" /><use xlink:href="#f1_glyph0-4" x="80.639" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 105.516 -49.43 L 105.516 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-8" x="123.647" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 148.475 -49.43 L 148.475 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-6" x="169.378" y="44.945" /><use xlink:href="#f1_glyph2-2" x="175.212" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 203.141 -49.43 L 203.141 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-11" x="229.691" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 263.664 -49.43 L 263.664 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-12" x="290.005" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 324.183 -49.43 L 324.183 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g style="fill:rgb(0%,0%,0%);fill-opacity:1;"><use xlink:href="#f1_glyph2-7" x="350.319" y="44.945" /></g><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 384.701 -49.43 L 384.701 -34.547" transform="matrix(0.996593,0,0,-0.996593,0,0)" /><g clip-path="url(#f1_clip4)"><path style="fill:none;stroke-width:0.398;stroke-linecap:butt;stroke-linejoin:miter;stroke:rgb(0%,0%,0%);stroke-opacity:1;stroke-miterlimit:10;" d="M 4.417 -49.63 L 445.42 -49.63" transform="matrix(0.996593,0,0,-0.996593,0,0)" /></g></g></svg></div> </span></div></div> Hãy tìm khoảng tứ phân vị của mẫu số liệu ghép nhóm trên.</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Số lần thực hiện cuộc gọi là $n=8+10+7+5+2+1=33$.<br> Ta có $\dfrac{n}{4}=\dfrac{33}{4}=8{,}25$.<br> Tứ phân vị thứ nhất của dãy số liệu thuộc nhóm $[60;120)$.<br> Do đó, tứ phân vị thứ nhất của mẫu số liệu là \[Q_1=60+\dfrac{\dfrac{33}{4}-8}{10} (120-60)=\dfrac{123}{2}.\] Ta có $\dfrac{3n}{4}=\dfrac{3\cdot 33}{4}=24{,}75$.<br> Tứ phân vị thứ ba của dãy số liệu thuộc nhóm $\left[120;180\right)$.<br> Do đó tứ phân vị thứ ba của mẫu số liệu là \[Q_3=120+\dfrac{\dfrac{3\cdot 33}{4}-18}{7} \left(180-120\right)=\dfrac{1\,245}{7}.\] Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=\dfrac{1\,245}{7}-\dfrac{123}{2}=\dfrac{1\,629}{14}\approx 116$.</div></div></div>
+<div class="question" id="q_P3_4" data-id="P3_4" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">4</span>:</b> Bảng sau thống kê cân nặng của $50$ quả xoài Thanh Ca được lựa chọn ngẫu nhiên sau khi thu hoạch ở một nông trường.</div><div class="tp"><div class="center"><div class="tp"><span class="resized-box"> <div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Cân nặng (gam)</td><td style="text-align:center">$[250;290)$</td><td style="text-align:center">$[290;330)$</td><td style="text-align:center">$[330;370)$</td><td style="text-align:center">$[370;410)$</td><td style="text-align:center">$[410;450)$</td></tr><tr><td style="text-align:center">Số quả xoài</td><td style="text-align:center">$3$</td><td style="text-align:center">$13$</td><td style="text-align:center">$18$</td><td style="text-align:center">$11$</td><td style="text-align:center">$5$</td></tr></table></div> </span></div></div> Khoảng tứ phân vị của mẫu số liệu ghép nhóm đó bằng $\dfrac{a}{b}$ với $\dfrac{a}{b}$ là phân số tối giản và $a,b\in \mathbb{Z}$. Tính giá trị biểu thức $T=a+b$.</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Cỡ mẫu $n=50$.<br> Ta có $\dfrac{n}{4}=\dfrac{50}{4}=12{,}5$. Tứ phân vị thứ nhất của mẫu số liệu gốc thuộc nhóm $ [290;330)$. <br> Do đó, tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q_1=290+\dfrac{\dfrac{50}{4}-3}{13} \left(330-290\right)=\dfrac{4150}{13}.\] Ta có $\dfrac{3n}{4}=\dfrac{3\cdot 50}{4}=37{,}5$.<br> Tứ phân vị thứ ba của mẫu số liệu gốc thuộc nhóm $ [370;410)$. <br> Do đó, tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q_3=370+\dfrac{\dfrac{3\cdot 50}{4}-\left(3+13+18\right)}{11} \left(410-370\right)=\dfrac{4\,210}{11}.\] Vậy khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=\dfrac{4\,210}{11}-\dfrac{4\,150}{13}=\dfrac{9\,080}{143}$.<br> Vậy giá trị biểu thức $T=a+b=9\,080+143=9\,223$.</div></div></div>
+<div class="question" id="q_P3_5" data-id="P3_5" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">5</span>:</b> Một bài kiểm tra trắc nghiệm trong khoảng thời gian $45$ phút gồm $25$ câu. Số câu đúng của thí sinh được giáo viên ghi lại trong bảng tần số ghép nhóm sau <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Số câu đúng</td><td style="text-align:center">$[4;8)$</td><td style="text-align:center">$[8;12)$</td><td style="text-align:center">$[12;16)$</td><td style="text-align:center">$[16;20)$</td><td style="text-align:center">$[20;24)$</td></tr><tr><td style="text-align:center">Số bài</td><td style="text-align:center">$11$</td><td style="text-align:center">$13$</td><td style="text-align:center">$16$</td><td style="text-align:center">$14$</td><td style="text-align:center">$n_5$</td></tr></table></div></div></div> Hãy tính tổng cộng có bao nhiêu bài thi nếu giáo viên cho biết theo bảng tần số ghép nhóm trên thì trung bình số câu đúng của mỗi bài thi là $13{,}4$.</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Giá trị đại diện của các khoảng lần lượt là: $6$; $10$; $14$; $18$; $22$. Theo công thức tính số trung bình của bảng tần số ghép nhóm: \[
+		\overline{x}=\dfrac{\sum n_i x_i}{\sum n_i}
+		\] Ta có: \begin{align*}
+			13{,}4&amp;= \dfrac{6\cdot11+10\cdot13+14\cdot16+18\cdot14+22n_5}{11+13+16+14+n_5}\\
+			13{,}4&amp;= \dfrac{672+22n_5}{54+n_5}\\
+			13{,}4(54+n_5)&amp;= 672+22n_5\\
+			723{,}6+13{,}4n_5&amp;= 672+22n_5\\
+			51{,}6&amp;= 8{,}6n_5\\
+			n_5&amp;= 6
+		\end{align*} Vậy tổng số bài thi là: \[
+		11+13+16+14+6=60.
+		\]</div></div></div>
+<div class="question" id="q_P3_6" data-id="P3_6" data-kind="short" data-part="3"><div class="qtext"><div class="tp"><b>Câu <span class="qno">6</span>:</b> Thời giảm luyện tập trong một ngày (tính theo giờ) của một số vận động viên được ghi lại ở bảng&nbsp;sau <div class="center"><div class="tp"><div class="table-responsive"><table class="tex-table bordered"><tr><td style="text-align:center">Thời gian luyện tập (giờ)</td><td style="text-align:center">$[0;2)$</td><td style="text-align:center">$[2;4)$</td><td style="text-align:center">$[4;6)$</td><td style="text-align:center">$[6;8)$</td><td style="text-align:center">$[8;10)$</td></tr><tr><td style="text-align:center">Số vận động viên</td><td style="text-align:center">$3$</td><td style="text-align:center">$8$</td><td style="text-align:center">$12$</td><td style="text-align:center">$12$</td><td style="text-align:center">$4$</td></tr></table></div></div></div> Giá trị khoảng tứ phân vị của mẫu số liệu ghép nhóm trên có dạng $\dfrac{a}{b}$ (tối giản). Tính $a+b$.</div></div><div class="opts"><div class="shortrow"><input type="text" class="sans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Nhập đáp án…"><button type="button" class="chk">Kiểm tra</button></div><div class="true-ans" hidden></div></div><div class="fb"></div><div class="qtools"><button type="button" class="sol-btn" hidden>Xem lời giải</button></div><div class="solution-box"><div class="tp"><b>Lời giải chi tiết:</b> Cỡ mẫu $n=39$.<br> Ta có $\dfrac{39}{4}=9{,}75$. Tứ phân vị thứ nhất của của mẫu số liệu ghép nhóm thuộc nhóm $ [2;4)$.<br> Do đó tứ phân vị thứ nhất của mẫu số liệu ghép nhóm là \[Q_1=2+\dfrac{\dfrac{1\cdot 39}{4}-3}{8} \left(4-2\right)=\dfrac{59}{16}.\] Ta có $\dfrac{3n}{4}=\dfrac{3\cdot 39}{4}=29{,}25$.<br> Vậy tứ phân vị thứ ba của mẫu số liệu ghép nhóm thuộc nhóm $[6;8)$.<br> Tứ phân vị thứ ba của mẫu số liệu ghép nhóm là \[Q_3=6+\dfrac{\dfrac{3\cdot 39}{4}-\left(3+8+12\right)}{12} \left(8-6\right)=\dfrac{169}{24}.\] Khoảng tứ phân vị của mẫu số liệu ghép nhóm là $\Delta_Q=Q_3-Q_1=\dfrac{161}{48}$.<br> Vậy $a=161$; $b=48$. Suy ra $a+b=161+48=209$.</div></div></div></div></section>
+        <div id="moreWrap" hidden><button type="button" id="moreBtn"></button></div>
+ 
+    </main>
+ 
+    <!-- THANH ĐIỀU HƯỚNG Ở CUỐI TRANG: lên đầu, nhảy đến câu, mục lục, footer -->
+    <nav class="navbar" aria-label="Điều hướng">
+        <div class="navin">
+            <button type="button" class="nbtn" id="navTop" title="Lên đầu trang">⬆ Đầu trang</button>
+            <div class="jump">
+                <label for="navNum">Câu</label>
+                <input type="number" id="navNum" min="1" inputmode="numeric" placeholder="số">
+                <span id="navTotal"></span>
+                <button type="button" class="nbtn" id="navGo">Đi</button>
+            </div>
+            <button type="button" class="nbtn" id="navToc" title="Mục lục câu hỏi">☰ Mục lục</button>
+            <span class="nav-credit">Liên hệ Kỳ Anh - 0937294343</span>
+        </div>
+    </nav>
+ 
+    <div class="modal" id="tocModal" role="dialog" aria-modal="true">
+        <div class="mbox">
+            <h2>Mục lục câu hỏi</h2>
+            <div class="tocleg">
+                <span class="t-correct">Đúng</span><span class="t-wrong">Sai</span><span class="t-partial">Một phần</span><span class="t-none">Chưa làm</span>
+            </div>
+            <div class="tocgrid" id="tocGrid"></div>
+            <div class="mbtns"><button type="button" class="sbtn" id="tocClose" style="background:#6c757d;">Đóng</button></div>
+        </div>
+    </div>
+ 
+    <div class="modal" id="summary" role="dialog" aria-modal="true">
+        <div class="mbox">
+            <h2>Kết quả luyện tập</h2>
+            <div id="sumBody"></div>
+            <div id="sumMsg"></div>
+            <div class="mbtns">
+                <button type="button" class="sbtn" id="sumRetry">Làm lại câu chưa đúng</button>
+                <button type="button" class="sbtn warn" id="sumRestart">Làm lại từ đầu</button>
+                <button type="button" class="sbtn" id="sumClose" style="background:#6c757d;">Đóng</button>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        const MEDIA_SCOPE = '.question.shown';
+        // =====================================================================
+        // XỬ LÝ SVG / ẢNH (dùng chung cho quiz và trình chiếu)
+        // Mỗi template khai báo trước: const MEDIA_SCOPE = '.vung-chua-hinh, ...';
+        // =====================================================================
+        const MEDIA_SVG_SEL = MEDIA_SCOPE.split(',').map(s => s.trim() + ' svg').join(', ');
+        const MEDIA_ALL_SEL = MEDIA_SCOPE.split(',').map(s => s.trim()).flatMap(s => [s + ' svg', s + ' img']).join(', ');
+
+        // Chỉ nhận số thuần hoặc "px"; "10cm", "50%", "auto"... trả về NaN để không đọc sai đơn vị
+        function svgNum(v) {
+            if (v == null) return NaN;
+            const m = String(v).trim().match(/^([0-9]*\.?[0-9]+)(px)?$/i);
+            return m ? parseFloat(m[1]) : NaN;
+        }
+
+        // Đổi id trong từng SVG thành duy nhất để các hình không dùng nhầm clipPath/marker/gradient của nhau
+        let __svgSeq = 0;
+        function uniquifySvgIds(svg) {
+            if (svg.dataset.idsDone) return;
+            svg.dataset.idsDone = '1';
+            const withId = svg.querySelectorAll('[id]');
+            if (!withId.length) return;
+            const prefix = 'svg' + (++__svgSeq) + '_';
+            const map = {};
+            withId.forEach(n => { map[n.id] = prefix + n.id; });
+            const ids = Object.keys(map);
+            const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const urlRe = /url\(\s*(['"]?)#([^)'"\s]+)\1\s*\)/g;
+            const fixUrls = str => str.replace(urlRe, (m, q, id) => map[id] ? `url(${q}#${map[id]}${q})` : m);
+
+            svg.querySelectorAll('*').forEach(n => {
+                if (n.tagName.toLowerCase() === 'style') {
+                    let css = fixUrls(n.textContent);
+                    css = css.replace(new RegExp('#(' + ids.map(esc).join('|') + ')(?![\\w-])', 'g'), '#' + prefix + '$1');
+                    n.textContent = css;
+                    return;
+                }
+                Array.from(n.attributes).forEach(a => {
+                    if (a.name === 'id' || a.value.indexOf('#') < 0) return;
+                    if ((a.name === 'href' || a.name === 'xlink:href') && a.value.charAt(0) === '#') {
+                        const id = a.value.slice(1);
+                        if (map[id]) n.setAttribute(a.name, '#' + map[id]);
+                    } else {
+                        const nv = fixUrls(a.value);
+                        if (nv !== a.value) n.setAttribute(a.name, nv);
+                    }
+                });
+            });
+            withId.forEach(n => { n.id = map[n.id]; });
+        }
+
+        // Chuẩn hóa SVG: id duy nhất + thêm viewBox nếu thiếu để SVG co giãn đúng
+        function normalizeSvgs() {
+            document.querySelectorAll(MEDIA_SVG_SEL).forEach(svg => {
+                if (svg.closest('mjx-container')) return;
+                uniquifySvgIds(svg);
+                if (svg.dataset.normalized) return;
+                const w = svgNum(svg.getAttribute('width'));
+                const h = svgNum(svg.getAttribute('height'));
+
+                if (!svg.hasAttribute('viewBox')) {
+                    if (w > 0 && h > 0) {
+                        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                    } else {
+                        try {   // đang bị ẩn thì getBBox lỗi -> sẽ thử lại khi phần chứa nó hiện ra
+                            const b = svg.getBBox();
+                            if (b.width && b.height)
+                                svg.setAttribute('viewBox', `${b.x - 2} ${b.y - 2} ${b.width + 4} ${b.height + 4}`);
+                        } catch (e) { return; }
+                    }
+                }
+                if (svg.hasAttribute('viewBox')) {
+                    if (w > 0) { svg.style.width = '100%'; svg.style.maxWidth = w + 'px'; }  // kích thước gốc làm trần
+                    svg.removeAttribute('height');
+                    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+                    svg.dataset.normalized = '1';
+                }
+            });
+        }
+
+        // Zoom: phóng to bằng cách tăng chiều rộng thật, khung tự cao theo, cuộn bằng thanh cuộn gốc
+        const __zoomRefresh = new Set();
+        let __zoomResizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(__zoomResizeTimer);
+            __zoomResizeTimer = setTimeout(() => __zoomRefresh.forEach(fn => fn()), 150);
+        });
+
+        function setupImageZoom() {
+            document.querySelectorAll(MEDIA_ALL_SEL).forEach(el => {
+                if (el.closest('.zoom-container') || el.closest('mjx-container') || el.classList.contains('no-zoom')) return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'zoom-container';
+                const viewport = document.createElement('div');
+                viewport.className = 'zoom-viewport';
+                el.parentNode.insertBefore(wrapper, el);
+                viewport.appendChild(el);
+                wrapper.appendChild(viewport);
+                el.classList.add('zoom-media');
+
+                let scale = 1;
+                const STEP = 0.25, MIN = 1, MAX = 4;
+
+                const toolbar = document.createElement('div');
+                toolbar.className = 'zoom-toolbar';
+                const mk = (txt, title) => {
+                    const b = document.createElement('button');
+                    b.type = 'button'; b.className = 'zoom-btn'; b.innerHTML = txt; b.title = title;
+                    b.setAttribute('aria-label', title);
+                    return b;
+                };
+                const btnIn = mk('➕', 'Phóng to'), btnOut = mk('➖', 'Thu nhỏ'), btnReset = mk('↺', 'Mặc định');
+
+                function apply(newScale) {
+                    const cx = viewport.scrollWidth ? (viewport.scrollLeft + viewport.clientWidth / 2) / viewport.scrollWidth : 0.5;
+                    const cy = viewport.scrollHeight ? (viewport.scrollTop + viewport.clientHeight / 2) / viewport.scrollHeight : 0.5;
+
+                    scale = Math.min(MAX, Math.max(MIN, Math.round(newScale * 100) / 100));
+
+                    el.classList.remove('zoomed');
+                    el.style.removeProperty('--zw');
+                    const base = el.getBoundingClientRect().width;   // chiều rộng vừa khung hiện tại
+                    if (scale > 1 && base > 0) {
+                        el.style.setProperty('--zw', (base * scale) + 'px');
+                        el.classList.add('zoomed');
+                        viewport.scrollLeft = cx * viewport.scrollWidth - viewport.clientWidth / 2;
+                        viewport.scrollTop = cy * viewport.scrollHeight - viewport.clientHeight / 2;
+                    }
+                    viewport.classList.toggle('can-pan', el.classList.contains('zoomed'));
+                    btnIn.disabled = scale >= MAX;
+                    btnOut.disabled = scale <= MIN;
+                }
+
+                btnIn.onclick = () => apply(scale + STEP);
+                btnOut.onclick = () => apply(scale - STEP);
+                btnReset.onclick = () => apply(1);
+                __zoomRefresh.add(() => { if (scale > 1) apply(scale); });
+
+                // Ctrl + lăn chuột để zoom, nhấp đúp để phóng to/reset
+                viewport.addEventListener('wheel', e => {
+                    if (!e.ctrlKey) return;
+                    e.preventDefault();
+                    apply(scale + (e.deltaY < 0 ? STEP : -STEP));
+                }, { passive: false });
+                viewport.addEventListener('dblclick', () => apply(scale > 1 ? 1 : 2));
+
+                // Kéo thả bằng chuột (cảm ứng dùng cuộn gốc của trình duyệt)
+                let dragging = false, sx = 0, sy = 0, sl = 0, st = 0;
+                viewport.addEventListener('pointerdown', e => {
+                    if (e.pointerType !== 'mouse' || !el.classList.contains('zoomed')) return;
+                    dragging = true; sx = e.clientX; sy = e.clientY; sl = viewport.scrollLeft; st = viewport.scrollTop;
+                    viewport.setPointerCapture(e.pointerId);
+                    viewport.classList.add('dragging');
+                });
+                viewport.addEventListener('pointermove', e => {
+                    if (!dragging) return;
+                    viewport.scrollLeft = sl - (e.clientX - sx);
+                    viewport.scrollTop = st - (e.clientY - sy);
+                });
+                const stop = () => { dragging = false; viewport.classList.remove('dragging'); };
+                viewport.addEventListener('pointerup', stop);
+                viewport.addEventListener('pointercancel', stop);
+
+                toolbar.append(btnIn, btnOut, btnReset);
+                wrapper.appendChild(toolbar);
+                apply(1);
+            });
+        }
+
+        // Bọc từng <table> trong khung cuộn ngang (bỏ qua bảng của MathJax hoặc bảng đã được bọc)
+        const MEDIA_TABLE_SEL = MEDIA_SCOPE.split(',').map(s => s.trim() + ' table').join(', ');
+        function wrapTables() {
+            document.querySelectorAll(MEDIA_TABLE_SEL).forEach(t => {
+                if (t.closest('mjx-container, .table-scroll, .table-responsive, #tblOverlay')) return;
+                if (!t.parentNode) return;
+                const w = document.createElement('div');
+                w.className = 'table-scroll';
+                t.parentNode.insertBefore(w, t);
+                w.appendChild(t);
+            });
+        }
+
+        // ---- Bảng rộng: gợi ý vuốt ngang, cột đầu cố định, nút xem toàn màn hình ----
+        const __tblRefresh = [];
+        window.addEventListener('resize', () => __tblRefresh.forEach(fn => fn()));
+        function tblState(box, sc) {
+            const over = sc.scrollWidth > sc.clientWidth + 2;
+            box.classList.toggle('has-scroll', over);
+            box.classList.toggle('at-end', !over || sc.scrollLeft + sc.clientWidth >= sc.scrollWidth - 2);
+        }
+        function enhanceTables() {
+            document.querySelectorAll('.table-responsive, .table-scroll').forEach(sc => {
+                if (sc.dataset.tblDone || sc.closest('#tblOverlay')) return;
+                const table = sc.querySelector('table');
+                if (!table || !sc.parentNode) return;
+                sc.dataset.tblDone = '1';
+                const box = document.createElement('div'); box.className = 'tbl-box';
+                const hint = document.createElement('div'); hint.className = 'tbl-hint';
+                const msg = document.createElement('span'); msg.textContent = '\u2194 Vuốt ngang để xem thêm';
+                const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'tbl-open'; btn.textContent = '\u26F6 Xem toàn màn hình';
+                btn.addEventListener('click', e => { e.stopPropagation(); openTableOverlay(table); });
+                hint.append(msg, btn);
+                const wrap = document.createElement('div'); wrap.className = 'tbl-wrap';
+                const fade = document.createElement('div'); fade.className = 'tbl-fade';
+                sc.parentNode.insertBefore(box, sc);
+                box.append(hint, wrap);
+                wrap.append(sc, fade);
+                const first = table.rows[0];
+                if (first && first.cells.length >= 4 && first.cells[0].colSpan === 1 && first.cells[0].rowSpan === 1) table.classList.add('sticky-first');
+                const upd = () => tblState(box, sc);
+                sc.addEventListener('scroll', upd, { passive: true });
+                if (window.ResizeObserver) new ResizeObserver(upd).observe(table);
+                __tblRefresh.push(upd);
+                upd();
+            });
+        }
+        let tblOv = null, tblScale = 1;
+        function closeTableOverlay() {
+            if (!tblOv) return;
+            tblOv.classList.remove('open');
+            document.documentElement.style.overflow = '';
+        }
+        function openTableOverlay(table) {
+            if (!tblOv) {
+                tblOv = document.createElement('div'); tblOv.id = 'tblOverlay';
+                tblOv.innerHTML = '<div class="tbl-ov-bar"><span class="ttl">Kéo để xem; A+ / A\u2212 đổi cỡ chữ</span>'
+                    + '<button type="button" class="zoom-btn" data-a="-">A\u2212</button><button type="button" class="zoom-btn" data-a="+">A+</button>'
+                    + '<button type="button" class="zoom-btn" data-a="x">\u2715 Đóng</button></div><div class="tbl-ov-body"></div>';
+                document.body.appendChild(tblOv);
+                tblOv.addEventListener('click', e => {
+                    const b = e.target.closest('button[data-a]');
+                    if (!b) return;
+                    if (b.dataset.a === 'x') { closeTableOverlay(); return; }
+                    tblScale = Math.min(2.6, Math.max(0.6, tblScale + (b.dataset.a === '+' ? 0.2 : -0.2)));
+                    tblOv.style.setProperty('--tbl-s', tblScale);
+                });
+                window.addEventListener('keydown', e => {                 // đang xem bảng: không để phím chuyển câu / slide
+                    if (!tblOv.classList.contains('open')) return;
+                    e.stopImmediatePropagation();
+                    if (e.key === 'Escape') closeTableOverlay();
+                }, true);
+            }
+            const body = tblOv.querySelector('.tbl-ov-body');
+            body.innerHTML = '';
+            const c = table.cloneNode(true);
+            c.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+            c.classList.remove('sticky-first');
+            body.appendChild(c);
+            tblScale = 1;
+            tblOv.style.setProperty('--tbl-s', 1);
+            tblOv.classList.add('open');
+            document.documentElement.style.overflow = 'hidden';
+            body.scrollTo(0, 0);
+        }
+
+        function initMedia() { wrapTables(); enhanceTables(); normalizeSvgs(); setupImageZoom(); }
+
+        window.addEventListener('load', () => setTimeout(initMedia, 300));
+
+ 
+        // =====================================================================
+        // LUYỆN TẬP
+        // =====================================================================
+        const KEY = {"P1_1": {"k": "mc", "a": "C"}, "P1_2": {"k": "mc", "a": "B"}, "P1_3": {"k": "mc", "a": "B"}, "P1_4": {"k": "mc", "a": "C"}, "P1_5": {"k": "mc", "a": "A"}, "P1_6": {"k": "mc", "a": "A"}, "P1_7": {"k": "mc", "a": "A"}, "P1_8": {"k": "mc", "a": "A"}, "P1_9": {"k": "mc", "a": "C"}, "P1_10": {"k": "mc", "a": "A"}, "P2_1": {"k": "tf"}, "P2_2": {"k": "tf"}, "P2_3": {"k": "tf"}, "P2_4": {"k": "tf"}, "P3_1": {"k": "short", "a": "15"}, "P3_2": {"k": "short", "a": "12,7"}, "P3_3": {"k": "short", "a": "116"}, "P3_4": {"k": "short", "a": "9223"}, "P3_5": {"k": "short", "a": "60"}, "P3_6": {"k": "short", "a": "209"}};                 // { id: {k:'mc', a:'B'} | {k:'tf'} | {k:'short', a:'-4'} }
+        const MAX_SCORE = 9.5;
+        const TF_PTS = [0, 0.1, 0.25, 0.5, 1];    // thang điểm đúng/sai theo số ý đúng
+ 
+        const $ = (s, r) => (r || document).querySelector(s);
+        const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+        const fmt = x => (Math.round(x * 100) / 100).toString().replace('.', ',');
+        function hashStr(str) { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+        function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+ 
+        // ---- trạng thái được lưu ----
+        const STORE_KEY = 'practice:v1:' + location.pathname + '|' + hashStr(document.title + JSON.stringify(KEY));
+        if (/[?&]reset=1(&|$)/.test(location.search)) { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+        let state = {};
+        try { state = JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { state = {}; }
+        state.ans = state.ans || {};              // id -> đáp án đã chọn
+        state.copts = state.copts || {};          // id -> thứ tự phương án (chữ cái gốc)
+        state.set = Object.assign({ sq: false, sc: false, hide: false }, state.set || {});
+        function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+ 
+        // ---- dữ liệu DOM ----
+        const questions = $$('.question');
+        const byId = {};
+        questions.forEach(q => { byId[q.dataset.id] = q; });
+        const ORIG_Q = questions.map(q => q.dataset.id);
+        const ORIG_CH = {};
+        questions.forEach(q => { if (q.dataset.kind === 'mc') ORIG_CH[q.dataset.id] = $$('.opt', q).map(o => o.dataset.k); });
+        const res = {};                           // id -> {status, pts, max}
+        let summaryShown = false;
+ 
+        // =====================================================================
+        // TẢI THEO KHỐI (mỗi đợt BLOCK câu)
+        // =====================================================================
+        const BLOCK = 5;
+        let shownCount = 0;                       // số câu (theo thứ tự đang hiển thị) đã hiện
+        let io = null;
+        let pendingJump = null;                   // câu đang được nhảy tới (giữ vị trí khi các khối phía trên dàn chữ xong)
+        function keepJump() { if (pendingJump) scrollToQuestion(pendingJump, false); }
+ 
+        // Dàn chữ toán + xử lý hình cho một số phần tử; xếp hàng để không chạy chồng nhau
+        function typesetNodes(nodes) {
+            const run = () => {
+                if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+                    MathJax.startup.promise = MathJax.startup.promise
+                        .then(() => MathJax.typesetPromise(nodes))
+                        .then(() => { initMedia(); rearm(); keepJump(); })
+                        .catch(err => console.warn(err));
+                } else setTimeout(run, 150);      // MathJax chưa tải xong
+            };
+            run();
+        }
+        function typesetQuestions(els) {
+            const nodes = [];
+            els.forEach(q => { const a = $('.qtext', q), b = $('.opts', q); if (a) nodes.push(a); if (b) nodes.push(b); });
+            typesetNodes(nodes);
+        }
+        function rearm() {                        // mốc cuối vẫn trong tầm nhìn thì tự tải tiếp
+            const s = $('#moreWrap');
+            if (io && s && !s.hidden) { io.unobserve(s); io.observe(s); }
+        }
+ 
+        function visibleQuestion(q) { return !(state.set.hide && q.classList.contains('done-hide')); }
+        function markDone() { questions.forEach(q => { if (q.classList.contains('s-correct')) q.classList.add('done-hide'); }); }
+        function syncParts() { $$('.part').forEach(p => { p.hidden = !p.querySelector('.question.shown'); }); }
+        function updateMore() {
+            const left = Math.max(questions.length - shownCount, 0);
+            $('#moreWrap').hidden = left <= 0;
+            $('#moreBtn').textContent = 'Tải thêm ' + Math.min(BLOCK, left) + ' câu (còn ' + left + ')';
+        }
+ 
+        // Hiện thêm n câu. exact=true: đếm cả câu đang bị ẩn do "Ẩn câu đã đúng"
+        function revealMore(n, exact) {
+            const all = $$('.question');
+            if (shownCount >= all.length) return;
+            const els = [];
+            let added = 0;
+            while (shownCount < all.length && added < n) {
+                const q = all[shownCount++];
+                q.classList.add('shown');
+                els.push(q);
+                if (exact || visibleQuestion(q)) added++;
+            }
+            state.shown = shownCount;
+            save();
+            syncParts();
+            updateMore();
+            typesetQuestions(els);
+        }
+        function resetShown() { questions.forEach(q => q.classList.remove('shown')); shownCount = 0; }
+        function fillBlock() {                    // luôn có đủ câu chưa ẩn để làm
+            const vis = $$('.question.shown').filter(visibleQuestion).length;
+            if (vis < BLOCK) revealMore(BLOCK - vis);
+        }
+ 
+        // ---- bố cục: thứ tự câu, thứ tự phương án, số câu ----
+        function currentOrder() { return $$('.question').map(q => q.dataset.id); }
+        function applyOrder(order) { order.forEach(id => { const q = byId[id]; if (q) q.parentNode.appendChild(q); }); }
+        function renumber() { $$('.question').forEach((q, i) => { const n = $('.qno', q); if (n) n.textContent = i + 1; }); }
+        function layoutChoices(q, letters) {
+            const box = $('.opts', q);
+            letters.forEach((L, i) => {
+                const o = $('.opt[data-k="' + L + '"]', box);
+                if (o) { box.appendChild(o); $('.lab', o).textContent = 'ABCDEFGH'[i] + '.'; }
+            });
+            state.copts[q.dataset.id] = letters;
+        }
+        function arrangeChoices(q) {
+            const base = ORIG_CH[q.dataset.id].slice();
+            layoutChoices(q, state.set.sc ? shuffle(base) : base);
+        }
+        function applyLayout(fresh) {
+            if (fresh) {
+                applyOrder(ORIG_Q);
+                if (state.set.sq) $$('.qlist').forEach(box => shuffle(Array.from(box.children)).forEach(q => box.appendChild(q)));
+                state.order = currentOrder();
+                state.copts = {};
+                questions.forEach(q => { if (q.dataset.kind === 'mc') arrangeChoices(q); });
+            }
+            renumber();
+            save();
+            if (fresh) { resetShown(); revealMore(BLOCK, true); }
+        }
+ 
+        // ---- thống kê ----
+        function updateStats() {
+            const ids = Object.keys(res);
+            let score = 0, ok = 0;
+            ids.forEach(id => { score += res[id].pts; if (res[id].status === 'correct') ok++; });
+            const total = questions.length;
+            $('#stStats').textContent = 'Đã làm ' + ids.length + '/' + total + ' · Đúng ' + ok + ' · ' + fmt(score) + '/' + fmt(MAX_SCORE) + ' điểm';
+            $('#barFill').style.width = (total ? ids.length / total * 100 : 0) + '%';
+        }
+ 
+        function finish(q, status, pts, max, silent) {
+            const id = q.dataset.id;
+            res[id] = { status: status, pts: pts, max: max };
+            q.classList.remove('s-correct', 's-wrong', 's-partial');
+            q.classList.add('s-' + status);
+            const fb = $('.fb', q);
+            fb.textContent = status === 'correct' ? '✔ Chính xác' : (status === 'partial' ? '½ Đúng một phần' : '✘ Chưa đúng');
+            fb.className = 'fb f-' + status;
+            const sb = $('.sol-btn', q);
+            if (sb) sb.hidden = false;
+            updateStats();
+            if (!silent) maybeShowSummary();
+        }
+ 
+        // ---- trả lời: trắc nghiệm ----
+        function answerMC(q, val, silent) {
+            if (q.dataset.done) return;
+            const id = q.dataset.id, correct = KEY[id].a;
+            q.dataset.done = '1';
+            $$('.opt', q).forEach(o => {
+                o.classList.add('locked');
+                if (o.dataset.k === correct) o.classList.add('correct');
+                else if (o.dataset.k === val) o.classList.add('wrong');
+            });
+            if (!silent) { state.ans[id] = val; save(); }
+            const ok = (val === correct);
+            finish(q, ok ? 'correct' : 'wrong', ok ? 0.25 : 0, 0.25, silent);
+        }
+ 
+        // ---- trả lời: đúng/sai từng ý ----
+        function pickTF(q, row, val, silent) {
+            if (row.dataset.val) return;
+            row.dataset.val = val;
+            const ok = (val === row.dataset.ans);
+            $$('.tfb button', row).forEach(b => {
+                b.disabled = true;
+                if (b.dataset.v === row.dataset.ans) b.classList.add('correct');
+                else if (b.dataset.v === val) b.classList.add('wrong');
+            });
+            row.classList.add(ok ? 'r-ok' : 'r-bad');
+            const rows = $$('.tfrow', q);
+            const map = {};
+            rows.forEach(r => { if (r.dataset.val) map[r.dataset.k] = r.dataset.val; });
+            if (!silent) { state.ans[q.dataset.id] = map; save(); }
+            if (Object.keys(map).length === rows.length) {
+                const c = rows.filter(r => r.dataset.val === r.dataset.ans).length;
+                const pts = rows.length === 4 ? TF_PTS[c] : (c / rows.length);
+                q.dataset.done = '1';
+                finish(q, c === rows.length ? 'correct' : (c === 0 ? 'wrong' : 'partial'), pts, 1, silent);
+            }
+        }
+ 
+        // ---- trả lời: trả lời ngắn ----
+        function norm(s) { return s.replace(/\u2212/g, '-').replace(/,/g, '.').replace(/\s+/g, ''); }
+        function sameAns(a, b) {
+            a = norm(a); b = norm(b);
+            if (a === '' || b === '') return false;
+            if (a === b) return true;
+            const x = Number(a), y = Number(b);
+            return isFinite(x) && isFinite(y) && Math.abs(x - y) < 1e-9;
+        }
+        function checkShort(q, silent, text) {
+            if (q.dataset.done) return;
+            const id = q.dataset.id, inp = $('.sans', q);
+            if (text !== undefined) inp.value = text;
+            if (norm(inp.value) === '') { if (!silent) inp.focus(); return; }
+            q.dataset.done = '1';
+            inp.readOnly = true;
+            $('.chk', q).disabled = true;
+            const ok = sameAns(inp.value, KEY[id].a);
+            inp.classList.add(ok ? 'correct' : 'wrong');
+            const ta = $('.true-ans', q);
+            ta.textContent = 'Đáp án đúng: ' + KEY[id].a;
+            ta.hidden = false;
+            if (!silent) { state.ans[id] = inp.value; save(); }
+            finish(q, ok ? 'correct' : 'wrong', ok ? 0.5 : 0, 0.5, silent);
+        }
+ 
+        // ---- lời giải (chỉ dàn chữ ở lần mở đầu tiên) ----
+        function toggleSol(q, btn) {
+            const s = $('.solution-box', q);
+            if (!s) return;
+            const open = s.style.display === 'block';
+            s.style.display = open ? 'none' : 'block';
+            btn.textContent = open ? 'Xem lời giải' : 'Ẩn lời giải';
+            if (!open) {
+                initMedia();
+                if (!s.dataset.ts) { s.dataset.ts = '1'; typesetNodes([s]); }
+            }
+        }
+ 
+        // ---- làm lại ----
+        function resetQuestion(q) {
+            const id = q.dataset.id;
+            delete q.dataset.done; delete res[id]; delete state.ans[id];
+            q.classList.remove('s-correct', 's-wrong', 's-partial', 'done-hide');
+            $$('.opt', q).forEach(o => o.classList.remove('locked', 'correct', 'wrong'));
+            $$('.tfrow', q).forEach(r => {
+                delete r.dataset.val;
+                r.classList.remove('r-ok', 'r-bad');
+                $$('.tfb button', r).forEach(b => { b.disabled = false; b.classList.remove('correct', 'wrong'); });
+            });
+            const inp = $('.sans', q);
+            if (inp) { inp.value = ''; inp.readOnly = false; inp.classList.remove('correct', 'wrong'); $('.chk', q).disabled = false; }
+            const ta = $('.true-ans', q); if (ta) ta.hidden = true;
+            const fb = $('.fb', q); fb.textContent = ''; fb.className = 'fb';
+            const sb = $('.sol-btn', q); if (sb) { sb.hidden = true; sb.textContent = 'Xem lời giải'; }
+            const s = $('.solution-box', q); if (s) s.style.display = 'none';
+        }
+ 
+        function retryWrong() {
+            questions.forEach(q => {
+                const id = q.dataset.id, r = res[id];
+                if (r && r.status === 'correct') return;
+                if (q.dataset.done || state.ans[id]) {
+                    resetQuestion(q);
+                    if (q.dataset.kind === 'mc') arrangeChoices(q);
+                }
+            });
+            state.set.hide = true;
+            $('#optHide').checked = true;
+            document.body.classList.add('hide-done');
+            markDone();                           // chỉ ẩn các câu đã đúng TẠI THỜI ĐIỂM này
+            summaryShown = false;
+            save(); updateStats(); closeSummary();
+            fillBlock();
+            setTimeout(() => {
+                const f = $$('.question.shown').find(visibleQuestion);
+                if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 120);
+        }
+ 
+        function restart(ask) {
+            if (ask && Object.keys(res).length && !confirm('Xoá toàn bộ kết quả và làm lại từ đầu?')) return;
+            questions.forEach(resetQuestion);
+            state.ans = {};
+            applyLayout(true);
+            $('#note').textContent = '';
+            summaryShown = false;
+            closeSummary(); updateStats();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+ 
+        // ---- bảng kết quả ----
+        function buildSummary() {
+            let score = 0;
+            const byPart = {};
+            questions.forEach(q => {
+                const p = q.dataset.part;
+                const b = byPart[p] = byPart[p] || { n: 0, ok: 0, part: 0, done: 0 };
+                b.n++;
+                const r = res[q.dataset.id];
+                if (r) { b.done++; score += r.pts; if (r.status === 'correct') b.ok++; else if (r.status === 'partial') b.part++; }
+            });
+            const pct = MAX_SCORE > 0 ? score / MAX_SCORE * 100 : 0;
+            const names = { 1: 'Phần 1 · Trắc nghiệm', 2: 'Phần 2 · Đúng/Sai', 3: 'Phần 3 · Trả lời ngắn' };
+            let html = '<div class="bigscore">' + fmt(score) + ' / ' + fmt(MAX_SCORE) + '</div><div class="pct">' + Math.round(pct) + '%</div><ul class="plist">';
+            Object.keys(byPart).sort().forEach(p => {
+                const b = byPart[p];
+                html += '<li><span>' + names[p] + '</span><b>' + b.ok + '/' + b.n + ' đúng' +
+                        (b.part ? ' · ' + b.part + ' một phần' : '') + (b.done < b.n ? ' · ' + (b.n - b.done) + ' chưa làm' : '') + '</b></li>';
+            });
+            html += '</ul>';
+            $('#sumBody').innerHTML = html;
+            $('#sumMsg').textContent = pct >= 80 ? 'Rất tốt!' : (pct >= 50 ? 'Khá ổn, hãy ôn lại các câu chưa đúng.' : 'Hãy xem lại lời giải và thử lại.');
+            const notOk = questions.filter(q => { const r = res[q.dataset.id]; return !r || r.status !== 'correct'; }).length;
+            $('#sumRetry').hidden = (notOk === 0);
+        }
+        function openSummary() { buildSummary(); $('#summary').classList.add('open'); }
+        function closeSummary() { $('#summary').classList.remove('open'); }
+        function maybeShowSummary() {
+            if (!summaryShown && Object.keys(res).length === questions.length) { summaryShown = true; openSummary(); }
+        }
+ 
+        // ---- sự kiện ----
+        document.addEventListener('click', e => {
+            if (e.target.closest('.zoom-toolbar')) return;           // nút phóng to/thu nhỏ ảnh không tính là chọn đáp án
+            const opt = e.target.closest('.opt');
+            if (opt) { answerMC(opt.closest('.question'), opt.dataset.k); return; }
+            const tb = e.target.closest('.tfb button');
+            if (tb) { const row = tb.closest('.tfrow'); pickTF(row.closest('.question'), row, tb.dataset.v); return; }
+            const cb = e.target.closest('.chk');
+            if (cb) { checkShort(cb.closest('.question')); return; }
+            const sb = e.target.closest('.sol-btn');
+            if (sb) { toggleSol(sb.closest('.question'), sb); }
+        });
+        document.addEventListener('keydown', e => {
+            const t = e.target;
+            if (e.key === 'Enter' && t.classList && t.classList.contains('sans')) { e.preventDefault(); checkShort(t.closest('.question')); }
+            else if ((e.key === 'Enter' || e.key === ' ') && t.classList && t.classList.contains('opt')) { e.preventDefault(); answerMC(t.closest('.question'), t.dataset.k); }
+            else if (e.key === 'Escape') { closeSummary(); closeToc(); }
+        });
+        $('#btnResult').onclick = openSummary;
+        $('#btnRetry').onclick = retryWrong;
+        $('#btnRestart').onclick = () => restart(true);
+        $('#sumRetry').onclick = retryWrong;
+        $('#sumRestart').onclick = () => restart(false);
+        $('#sumClose').onclick = closeSummary;
+        $('#summary').addEventListener('click', e => { if (e.target.id === 'summary') closeSummary(); });
+        $('#moreBtn').onclick = () => revealMore(BLOCK);
+ 
+        function onLayoutSetting() {
+            save();
+            if (Object.keys(state.ans).length === 0) { applyLayout(true); $('#note').textContent = ''; }
+            else $('#note').textContent = 'Tuỳ chọn trộn sẽ áp dụng khi bấm “Làm lại từ đầu”.';
+        }
+        $('#optSQ').checked = state.set.sq;
+        $('#optSC').checked = state.set.sc;
+        $('#optHide').checked = state.set.hide;
+        $('#optSQ').onchange = e => { state.set.sq = e.target.checked; onLayoutSetting(); };
+        $('#optSC').onchange = e => { state.set.sc = e.target.checked; onLayoutSetting(); };
+        $('#optHide').onchange = e => {
+            state.set.hide = e.target.checked;
+            document.body.classList.toggle('hide-done', state.set.hide);
+            if (state.set.hide) markDone(); else questions.forEach(q => q.classList.remove('done-hide'));
+            save(); fillBlock();
+        };
+        document.body.classList.toggle('hide-done', state.set.hide);
+ 
+        // =====================================================================
+        // THANH ĐIỀU HƯỚNG: lên đầu, nhảy đến câu, mục lục
+        // =====================================================================
+        function scrollToQuestion(q, smooth) { q.scrollIntoView({ behavior: smooth ? 'smooth' : 'auto', block: 'start' }); }
+ 
+        function jumpTo(n) {
+            const all = $$('.question');
+            if (!all.length) return;
+            n = Math.min(Math.max(parseInt(n, 10) || 1, 1), all.length);
+            const q = all[n - 1];
+            if (n > shownCount) revealMore(n - shownCount, true);                    // câu chưa được tải -> tải tới câu đó
+            if (q.classList.contains('done-hide')) q.classList.remove('done-hide');  // câu đang bị ẩn do "Ẩn câu đã đúng" -> cho hiện
+            pendingJump = q;
+            setTimeout(() => { if (pendingJump === q) pendingJump = null; }, 5000);
+            scrollToQuestion(q, false);
+            q.classList.remove('flash'); void q.offsetWidth; q.classList.add('flash');
+            setTimeout(() => q.classList.remove('flash'), 1800);
+            $('#navNum').value = n;
+        }
+        // người dùng tự cuộn thì thôi giữ vị trí
+        ['wheel', 'touchstart', 'mousedown'].forEach(ev => window.addEventListener(ev, () => { pendingJump = null; }, { passive: true }));
+        window.addEventListener('keydown', e => { if (e.key !== 'Enter') pendingJump = null; });
+ 
+        function openToc() {
+            const grid = $('#tocGrid');
+            grid.textContent = '';
+            $$('.question').forEach((q, i) => {
+                const r = res[q.dataset.id];
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'tocitem ' + (r ? 't-' + r.status : 't-none');
+                b.textContent = i + 1;
+                b.title = 'Câu ' + (i + 1) + (r ? (r.status === 'correct' ? ' · đúng' : (r.status === 'partial' ? ' · một phần' : ' · sai')) : ' · chưa làm');
+                b.onclick = () => { closeToc(); jumpTo(i + 1); };
+                grid.appendChild(b);
+            });
+            $('#tocModal').classList.add('open');
+        }
+        function closeToc() { $('#tocModal').classList.remove('open'); }
+ 
+        $('#navTotal').textContent = '/ ' + questions.length;
+        $('#navNum').max = questions.length;
+        $('#navTop').onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+        $('#navGo').onclick = () => { const v = $('#navNum').value; if (v !== '') jumpTo(v); else $('#navNum').focus(); };
+        $('#navNum').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#navGo').click(); } });
+        $('#navToc').onclick = openToc;
+        $('#tocClose').onclick = closeToc;
+        $('#tocModal').addEventListener('click', e => { if (e.target.id === 'tocModal') closeToc(); });
+ 
+        // tự tải khối tiếp theo khi cuộn gần cuối
+        if ('IntersectionObserver' in window) {
+            io = new IntersectionObserver(entries => {
+                if (entries.some(e => e.isIntersecting)) revealMore(BLOCK);
+            }, { rootMargin: '300px 0px' });
+            io.observe($('#moreWrap'));
+        }
+ 
+        // ---- khởi tạo: khôi phục thứ tự, đáp án đã lưu, rồi hiện khối đầu ----
+        if (state.order && state.order.length === questions.length) applyOrder(state.order);
+        questions.forEach(q => {
+            if (q.dataset.kind !== 'mc') return;
+            const l = state.copts[q.dataset.id];
+            if (l && l.length === ORIG_CH[q.dataset.id].length) layoutChoices(q, l); else arrangeChoices(q);
+        });
+        state.order = currentOrder();
+        renumber();
+        Object.keys(state.ans).forEach(id => {
+            const q = byId[id];
+            if (!q) return;
+            const a = state.ans[id], kind = q.dataset.kind;
+            if (kind === 'mc') answerMC(q, a, true);
+            else if (kind === 'tf') Object.keys(a).forEach(k => { const row = $('.tfrow[data-k="' + k + '"]', q); if (row) pickTF(q, row, a[k], true); });
+            else if (kind === 'short') checkShort(q, true, a);
+        });
+        summaryShown = (questions.length > 0 && Object.keys(res).length === questions.length);   // mở lại trang không bật lại hộp kết quả
+        if (state.set.hide) markDone();
+        (function () {
+            // số câu cần hiện ngay: ít nhất 1 khối, đủ bao gồm câu đã làm và số câu đã hiện lần trước
+            const all = $$('.question');
+            let need = Math.max(BLOCK, state.shown || 0);
+            all.forEach((q, i) => { if (state.ans[q.dataset.id]) need = Math.max(need, i + 1); });
+            need = Math.min(all.length, Math.ceil(need / BLOCK) * BLOCK);
+            revealMore(need, true);
+        })();
+        updateStats();
+        save();
+    </script>
+<script>
+(function () {
+    var timer = 0, TAG = { '1': 'TN', '2': 'ĐS', '3': 'TLN', '4': 'TL' };
+    function setText(el, v) { if (el && el.textContent !== v) el.textContent = v; }
+    function renumber() {
+        var secs = document.querySelectorAll('section.part[data-off]');
+        var all = document.querySelectorAll('.question');
+        var shown = {}, tag = {}, per = false;
+        Array.prototype.forEach.call(secs, function (sec) {
+            var off = parseInt(sec.getAttribute('data-off'), 10) || 0;
+            if (sec.getAttribute('data-cont') === '0') per = true;
+            var qs = sec.querySelectorAll('.question');
+            Array.prototype.forEach.call(qs, function (q, i) {
+                var want = String(off + i + 1);
+                setText(q.querySelector('.qno'), want);
+                shown[q.getAttribute('data-id')] = want;
+                tag[q.getAttribute('data-id')] = TAG[sec.getAttribute('data-part')] || '';
+            });
+        });
+        // lưới mục lục (được dựng lại mỗi lần mở): nhãn theo số đã hiển thị
+        var btns = document.querySelectorAll('#tocGrid .tocitem');
+        Array.prototype.forEach.call(btns, function (b, i) {
+            var q = all[i]; if (!q) return;
+            var id = q.getAttribute('data-id'), n = shown[id]; if (!n) return;
+            setText(b, per ? tag[id] + n : n);
+            var t = b.getAttribute('title') || '';
+            var nt = t.replace(/^Câu \d+( \([^)]*\))?/, 'Câu ' + n + (per ? ' (' + tag[id] + ')' : ''));
+            if (nt !== t) b.setAttribute('title', nt);
+        });
+        var lb = document.querySelector('label[for="navNum"]');
+        if (lb && per) { setText(lb, 'Thứ tự'); lb.title = 'Nhảy tới câu thứ n trong toàn bộ đề'; }
+    }
+    function later() { clearTimeout(timer); timer = setTimeout(renumber, 30); }
+    new MutationObserver(later).observe(document.body, { childList: true, subtree: true, characterData: true });
+    document.addEventListener('click', later, true);
+    window.addEventListener('load', later);
+    [100, 500, 1500, 3000].forEach(function (ms) { setTimeout(renumber, ms); });
+    renumber();
+})();
+</script>
+</body>
+</html>
